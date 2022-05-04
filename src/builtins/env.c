@@ -7,7 +7,7 @@
 
 #include "minishell.h"
 
-int exec_builtin_fd(char **args, char ***env, int fds[2], int is_pipe)
+int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
 {
     void (*builtin[5])(char **, char ***, int, int) = {
         &cd_pipe, &setenv_pipe, &unsetenv_pipe, NULL, NULL
@@ -18,10 +18,10 @@ int exec_builtin_fd(char **args, char ***env, int fds[2], int is_pipe)
     int index = index_str_in_array(builtins, args[0]);
 
     if (index < 3)
-        builtin[index](args, env, fds[1], is_pipe);
-    else if (index == 3)
-        env_pipe(args, env, fds[1]);
-    else
+        builtin[index](args, &vars->env, fds[1], is_pipe);
+    if (index == 3)
+        env_pipe(args, &vars->env, fds[1]);
+    if (index == 4)
         exit_pipe(args, is_pipe);
     return 0;
 }

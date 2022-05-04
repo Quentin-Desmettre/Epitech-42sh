@@ -50,7 +50,7 @@ static void clear_childs(int *pids, int i, list_t **commands)
     free(pids);
 }
 
-void exec_commands(list_t *commands, char ***env, list_t **all_commands)
+void exec_commands(list_t *commands, env_t *vars, list_t **all_commands)
 {
     command_t *cur;
     int fds[2] = {STDIN_FILENO, STDOUT_FILENO};
@@ -58,7 +58,7 @@ void exec_commands(list_t *commands, char ***env, list_t **all_commands)
     int *pids = init_pids(size);
     int is_pipe = 0;
     int cannot_find = 0;
-    void *params[6] = {fds, pids, &cannot_find, env, all_commands, &commands};
+    void *params[6] = {fds, pids, &cannot_find, vars, all_commands, &commands};
 
     for (int i = 0; commands; i++) {
         clear_cmds(&cur, fds, &commands);

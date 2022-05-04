@@ -62,12 +62,29 @@ typedef struct {
     char redir_type;
 } command_t;
 
+typedef struct {
+} history_t;
+
+typedef struct {
+} aliases_t;
+
+typedef struct {
+} local_var_t;
+
+typedef struct {
+    history_t *history;
+    aliases_t *aliases;
+    local_var_t *vars;
+    char **env;
+} env_t;
+
+env_t *init_vars(char **env);
 void cd_pipe(char **args, char ***env, int o_fd, int is_pipe);
 int print_flags(int *flags, char const *home, int len_home, int o_fd);
 char *get_current_dir(void);
 int get_cd_flags(char *str, int *flags);
 char *get_dir(char const *dir, char **env, char const *home);
-int exec_builtin_fd(char **args, char ***env, int fds[2], int is_pipe);
+int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe);
 int is_builtin(char const *word);
 void env_pipe(char **args, char ***e, int o_fd);
 void set_exit_status(int val);
@@ -78,7 +95,7 @@ int index_of_key(char **env, char const *key);
 void unsetenv_pipe(char **args, char ***e, int o_fd, int is_pipe);
 command_t *create_command(void);
 void free_command(void *commnd);
-void exec_commands(list_t *commands, char ***env, list_t **all_commands);
+void exec_commands(list_t *commands, env_t *vars, list_t **all_commands);
 char const *find_command(char const *str, char **env);
 void exec_args(char const *prog, char **args, char **env);
 void close_pipe(int fds[2]);
@@ -113,5 +130,6 @@ char const *get_field(char **env, char const *field);
 void print_input(char **env);
 void redirect_sigint(int id);
 char *get_shell_input(char **env, int *stop);
+void free_vars(env_t *vars);
 
 #endif
