@@ -18,7 +18,8 @@ SRC = \
 	src/globals/is_exit.c                              \
 	src/print_input.c                                  \
 	src/redirect.c                                     \
-	src/shell_input.c                                  \
+	src/get_input/shell_input.c                        \
+	src/get_input/termios.c                            \
 	src/main.c                                         \
 	src/parse_input/parse_input.c                      \
 	src/parse_input/get_next_word.c                    \
