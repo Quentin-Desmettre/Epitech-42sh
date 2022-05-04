@@ -15,6 +15,12 @@
     #include <unistd.h>
     #include <fcntl.h>
     #include <errno.h>
+    #include <sys/ioctl.h>
+    #include <stdio.h>
+    #include <termios.h>
+    #include <stdlib.h>
+
+    #define BUFFER_SIZE 10
 
     #define NULL_CMD "Invalid null command."
     #define AMBIG_OUT "Ambiguous output redirect."
@@ -61,6 +67,14 @@ typedef struct {
     int output_fd;
     char redir_type;
 } command_t;
+
+typedef struct {
+    char *buffer;
+    int buff_limit;
+    int buf_size;
+    int key_pos;
+    int line_offset;
+} input_t;
 
 typedef struct {
 } history_t;
@@ -130,6 +144,11 @@ char const *get_field(char **env, char const *field);
 void print_input(char **env);
 void redirect_sigint(int id);
 char *get_shell_input(char **env, int *stop);
+struct termios *original_termios(struct termios *new);
+int get_input_len(char **env);
+char *end_command(input_t *input);
+void print_buffer(input_t *buf, char **env);
+void reset_input_buffer(input_t *buf);
 void free_vars(env_t *vars);
 
 #endif

@@ -48,3 +48,19 @@ void print_input(char **env)
     print("[%s@%s %s]$ ", user, host, dir);
     free(dir);
 }
+
+int get_input_len(char **env)
+{
+    char const *user = get_field(env, "USER=");
+    char const *host = get_field(env, "HOSTNAME=");
+    char *dir = get_raw_dir();
+    int len;
+
+    if (host[0] == 0)
+        host = get_field(env, "HOST=");
+    if (my_strcmp(user, dir) == 0)
+        re_alloc(&dir, my_strdup("~"), 1);
+    len = my_strlen(user) + my_strlen(host) + my_strlen(dir) + 4;
+    free(dir);
+    return len;
+}

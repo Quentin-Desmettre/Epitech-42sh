@@ -46,12 +46,15 @@ int main(int ac, char **av, char **env)
 {
     char *input;
     int stop = 0;
+    struct termios saved_term;
     env_t *vars;
 
     if (ac != 1 || !env || !av)
         return 84;
     vars = init_vars(env);
     open_stdin();
+    tcgetattr(0, &saved_term);
+    original_termios(&saved_term);
     while (!stop) {
         set_is_exit(0);
         input = get_shell_input(vars->env, &stop);
