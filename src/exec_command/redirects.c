@@ -99,12 +99,12 @@ int exec_command(command_t *cur, void *params[6], int is_pipe, int i)
     int *fds = params[0];
     int *pids = params[1];
     int *cannot_find = params[2];
-    char ***env = params[3];
+    env_t *vars = params[3];
     char const *command;
     if (is_builtin(cur->args[0]))
-        pids[i] = exec_builtin_fd(cur->args, env, fds, is_pipe);
+        pids[i] = exec_builtin_fd(cur->args, vars, fds, is_pipe);
     else {
-        command = find_command(cur->args[0], *env);
+        command = find_command(cur->args[0], vars->env);
         pids[i] = fork();
         *cannot_find = (command && (pids[i] >= 0)) ? *cannot_find : 1;
         if (pids[i] < 0) {

@@ -30,7 +30,8 @@ SRC = \
 	src/exec_command/exec.c                            \
 	src/exec_command/redirects.c                       \
 	src/exec_command/pipe.c                            \
-	src/command.c
+	src/command.c                                      \
+	src/init_vars.c
 
 OBJ = $(SRC:.c=.o)
 
