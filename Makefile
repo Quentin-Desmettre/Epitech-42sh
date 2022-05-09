@@ -35,7 +35,7 @@ SRC = \
 
 OBJ = $(SRC:.c=.o)
 
-NAME = mysh
+NAME = 42sh
 
 CFLAGS = -Wall -Wextra -I ./include/ -I lib/my/include/
 
