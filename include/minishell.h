@@ -80,6 +80,12 @@ typedef struct {
 } history_t;
 
 typedef struct {
+    char *name;
+    char *value;
+} alias_t;
+
+typedef struct {
+    list_t *commands;
 } aliases_t;
 
 typedef struct {
@@ -150,5 +156,9 @@ char *end_command(input_t *input);
 void print_buffer(input_t *buf, char **env);
 void reset_input_buffer(input_t *buf);
 void free_vars(env_t *vars);
+
+void alias(char **args, env_t *e, int o_fd, int is_pipe);
+void unalias(char **args, env_t *e, int o_fd, int is_pipe);
+void rm_alias(void *alias);
 
 #endif

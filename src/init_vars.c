@@ -7,6 +7,14 @@
 
 #include "minishell.h"
 
+aliases_t *init_alias(void)
+{
+    aliases_t *aliases = malloc(sizeof(aliases_t));
+
+    aliases->commands = NULL;
+    return (aliases);
+}
+
 static char **init_env(char **env)
 {
     int len = my_str_array_len(env);
@@ -29,5 +37,6 @@ env_t *init_vars(char **env)
 
     memset(vars, 0, sizeof(env_t));
     vars->env = init_env(env);
+    vars->aliases = init_alias();
     return vars;
 }
