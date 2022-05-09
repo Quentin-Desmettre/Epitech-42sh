@@ -20,7 +20,8 @@ char *end_command(input_t *input)
 {
     if (input->buffer)
         free(input->buffer);
-    write(1, "\n\r", 2);
+    if (isatty(0))
+        write(1, "\n\r", 2);
     tcsetattr(0, TCSANOW, original_termios(NULL));
     return NULL;
 }
@@ -38,6 +39,8 @@ void print_buffer(input_t *buf, char **env)
     char go_left[3] = {27, 91, 68};
     struct winsize w;
 
+    if (!isatty(0))
+        return;
     write(1, "\33[2K\r", 5);
     print_input(env);
     for (int i = 0; i < buf->line_offset - get_input_len(env); i++)

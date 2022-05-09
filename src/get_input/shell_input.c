@@ -83,7 +83,7 @@ static char *get_command(int *stop, char **env)
            put_in_buffer(c, &input);
     }
     tcsetattr(0, TCSANOW, original_termios(NULL));
-    write(1, "\n\r", 2);
+    isatty(0) ? write(1, "\n\r", 2) : 0;
     return input.buffer;
 }
 
