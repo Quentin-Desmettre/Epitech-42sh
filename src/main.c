@@ -28,6 +28,7 @@ static void parse_input(char const *input, env_t *vars)
     free((char *)input);
     while (commands) {
         cmds = get_command_list(commands->data, &err_mess);
+
         remove_node(&commands, 0, free);
         if (!cmds)
             dprint(2, "%s\n", err_mess);
