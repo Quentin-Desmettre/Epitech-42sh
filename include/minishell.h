@@ -82,19 +82,16 @@ typedef struct {
 typedef struct {
     char *name;
     char *value;
-} alias_t;
+} replace_t;
 
 typedef struct {
     list_t *commands;
 } aliases_t;
 
 typedef struct {
-} local_var_t;
-
-typedef struct {
     history_t *history;
     aliases_t *aliases;
-    local_var_t *vars;
+    char **vars;
     char **env;
 } env_t;
 
@@ -160,5 +157,18 @@ void free_vars(env_t *vars);
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);
 void rm_alias(void *alias);
+
+void setvar_pipe(char **args, char ***var, int o_fd, int is_pipe);
+void unsetvar_pipe(char **args, char ***e, int o_fd, int is_pipe);
+int index_of_key(char **env, char const *key);
+int var_is_key(char const *test, char const *field);
+int var_index_of_key(char **env, char const *key);
+void var_setter(char ***var, int index, char **args);
+int set(char **args, char ***var, int o_fd, int is_pipe);
+int place_in_local(char **new, char ***array, int i, char *val);
+void append_var_array(char ***array, char *val);
+void set_var(char ***var, int index, char const *key, char const *val);
+void create_var(char ***var, char const *key, char const *val);
+int var_args_valid(char **args);
 
 #endif

@@ -10,7 +10,7 @@
 void print_alias(list_t **c, int fd)
 {
     list_t *tmp = *c;
-    alias_t *cmd = 0;
+    replace_t *cmd = 0;
 
     if (*c == 0)
         return;
@@ -24,7 +24,7 @@ void print_alias(list_t **c, int fd)
 void print_one_alias(list_t **c, int fd, char *av)
 {
     list_t *tmp = *c;
-    alias_t *cmd = 0;
+    replace_t *cmd = 0;
 
     if (*c == 0)
         return;
@@ -38,7 +38,7 @@ void print_one_alias(list_t **c, int fd, char *av)
     }
 }
 
-void set_value(char **args, alias_t *new)
+void set_value(char **args, replace_t *new)
 {
     int size = my_str_array_len(args);
     char *all = malloc(1);
@@ -57,8 +57,8 @@ void set_value(char **args, alias_t *new)
 void add_alias(char **args, list_t **c, int is_pipe)
 {
     list_t *tmp = *c;
-    alias_t *cmd = 0;
-    alias_t *new = malloc(sizeof(alias_t));
+    replace_t *cmd = 0;
+    replace_t *new = malloc(sizeof(replace_t));
 
     set_value(args, new);
     if (*c == 0)
@@ -82,6 +82,7 @@ void alias(char **args, env_t *e, int o_fd, int is_pipe)
 {
     int size = my_str_array_len(args);
 
+    set_exit_status(0);
     if (size == 1)
         print_alias(&e->aliases->commands, o_fd);
     if (size == 2)

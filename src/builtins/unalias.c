@@ -11,7 +11,7 @@
 
 void rm_alias(void *alias)
 {
-    alias_t *tmp = alias;
+    replace_t *tmp = alias;
 
     free(tmp->name);
     free(tmp->value);
@@ -21,7 +21,7 @@ void rm_alias(void *alias)
 void one_unalias(list_t **c, int fd, char *av)
 {
     list_t *tmp = *c;
-    alias_t *cmd = 0;
+    replace_t *cmd = 0;
 
     if (c == 0)
         return;
@@ -44,6 +44,7 @@ void unalias(char **args, env_t *e, int o_fd, int is_pipe)
         set_exit_status(1);
         return;
     }
+    set_exit_status(0);
     for (int i = 1; i < size && is_pipe == 0; i++)
         one_unalias(&e->aliases->commands, o_fd, args[i]);
 }

@@ -14,6 +14,9 @@ SRC = \
 	src/builtins/unsetenv.c                            \
 	src/builtins/alias.c                               \
 	src/builtins/unalias.c                             \
+	src/builtins/set.c                            	   \
+	src/builtins/set2.c                            	   \
+	src/builtins/unset.c                               \
 	src/globals/last_exit.c                            \
 	src/globals/reset_buffer.c                         \
 	src/globals/std_in.c                               \
