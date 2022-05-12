@@ -148,7 +148,8 @@ char **str_to_word_array(char const *str, char *delimiters)
     for (int i = 0; i <= len; i++) {
         if (!is_in_str(str[i], delimiters) && str[i] != 0 && start == -1)
             start = i;
-        if ((is_in_str(str[i], delimiters) || str[i] == 0) && start >= 0 && (i == 0 || str[i - 1] != '\\')) {
+        if ((is_in_str(str[i], delimiters) || str[i] == 0)
+        && start >= 0 && (i == 0 || str[i - 1] != '\\')) {
             tmp[count] = my_strndup(str + start, i - start);
             start = -1;
             count++;
@@ -157,16 +158,32 @@ char **str_to_word_array(char const *str, char *delimiters)
     return (tmp);
 }
 
+static char *add_separator(char *separator, char *input)
+{
+    int separator_type = -1;
+    int before = -1;
+
+    for (int i = 0; input[i]; i++) {
+        separator_type = contain_separator(input[i], separator);
+        if (separator_type >= 0 &&
+        before != separator_type && i > 0 && input[i - 1] != ' ')
+            input = replace(input, i, 0, " ");
+        if (separator_type == -1 && before != -1)
+            input = replace(input, i, 0, " ");
+        before = separator_type;
+    }
+    return (input);
+}
+
 static char **parse_input(char *input)
 {
     char **word_parse = NULL;
-    int last_separator_index = 0;
-    int nbr_of_word = 1;
-    char *str_separator = " ;&|";
-    int index_separator = -1;
-    int i;
+    char *str_separator = ";&|";
 
     input = clear_str(input);
+    puts(input);
+    input = add_separator(str_separator, input);
+    puts(input);
     word_parse = str_to_word_array(input, " ");
     return (word_parse);
 }
