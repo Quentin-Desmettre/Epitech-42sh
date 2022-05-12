@@ -6,29 +6,32 @@
 ##
 
 SRC = \
-	src/builtins/cd_get_infos.c                        \
-	src/builtins/cd.c                                  \
-	src/builtins/env.c                                 \
-	src/builtins/exit.c                                \
-	src/builtins/setenv.c                              \
-	src/builtins/unsetenv.c                            \
-	src/globals/last_exit.c                            \
-	src/globals/reset_buffer.c                         \
-	src/globals/std_in.c                               \
-	src/globals/is_exit.c                              \
-	src/print_input.c                                  \
-	src/redirect.c                                     \
-	src/shell_input.c                                  \
-	src/main.c                                         \
-	src/parse_input/parse_input.c                      \
-	src/parse_input/get_next_word.c                    \
-	src/parse_input/check_redirections.c               \
-	src/parse_input/heredoc.c                          \
-	src/parse_input/split_semicolon.c                  \
-	src/exec_command/find_command.c                    \
-	src/exec_command/exec.c                            \
-	src/exec_command/redirects.c                       \
-	src/exec_command/pipe.c                            \
+	src/builtins/cd_get_infos.c        			 \
+	src/builtins/cd.c                  			 \
+	src/builtins/env.c                 			 \
+	src/builtins/exit.c                			 \
+	src/builtins/setenv.c              			 \
+	src/builtins/unsetenv.c            			 \
+	src/globals/last_exit.c            			 \
+	src/globals/reset_buffer.c         			 \
+	src/globals/std_in.c               			 \
+	src/globals/is_exit.c              			 \
+	src/print_input.c                  			 \
+	src/redirect.c                     			 \
+	src/shell_input.c                  			 \
+	src/main.c                         			 \
+	src/parse_input/parse_input.c      			 \
+	src/parse_input/clear_input_str.c      		 \
+	src/parse_input/edit_input.c          		 \
+	src/parse_input/str_to_word_array_input.c    \
+	src/parse_input/get_next_word.c        		 \
+	src/parse_input/check_redirections.c   		 \
+	src/parse_input/heredoc.c              		 \
+	src/parse_input/split_semicolon.c      		 \
+	src/exec_command/find_command.c        		 \
+	src/exec_command/exec.c                		 \
+	src/exec_command/redirects.c           		 \
+	src/exec_command/pipe.c                		 \
 	src/command.c
 
 OBJ = $(SRC:.c=.o)

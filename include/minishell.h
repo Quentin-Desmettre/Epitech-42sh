@@ -114,4 +114,10 @@ void print_input(char **env);
 void redirect_sigint(int id);
 char *get_shell_input(char **env, int *stop);
 
+//parse_input
+int contain_separator(char str, const char *specifier);
+char *clear_str(char *string);
+char **str_to_word_array(char const *str, char *delimiters);
+char *add_separator(char *separator, char *input);
+
 #endif
