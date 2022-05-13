@@ -26,9 +26,6 @@ SRC = \
 	src/get_input/shell_input.c                        \
 	src/get_input/termios.c                            \
 	src/main.c                                         \
-	src/parse_input/parse_input.c                      \
-	src/parse_input/get_next_word.c                    \
-	src/parse_input/check_redirections.c               \
 	src/parse_input/heredoc.c                          \
 	src/parse_input/split_semicolon.c                  \
 	src/exec_command/find_command.c                    \
