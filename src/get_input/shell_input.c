@@ -98,11 +98,8 @@ char *get_shell_input(env_t *vars, int *stop)
             print_input(vars->env);
         str = get_command(stop, vars->env);
         if (!str) {
-            free_str_array(vars->vars, 1);
-            free_str_array(vars->env, 1);
-            free(vars->aliases);
-            free(vars->history);
-            free(vars);
+            my_free("PPppp", vars->vars, vars->env, vars->aliases,
+            vars->history, vars);
             print("%s", isatty(get_stdin()) ? "exit\n" : "");
             exit(0);
         }
