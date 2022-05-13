@@ -22,9 +22,9 @@ void one_unalias(list_t **c, int fd, char *av)
     list_t *tmp = *c;
     replace_t *cmd = 0;
 
-    if (c == 0)
+    if (*c == 0)
         return;
-    for (int i = 0; i == 0 || (tmp == *c && *c != 0); i++) {
+    for (int i = 0; i == 0 || (tmp != *c); i++) {
         cmd = tmp->data;
         if (strcmp(cmd->name, av) == 0) {
             remove_node(c, i, rm_alias);

@@ -38,7 +38,7 @@ int main(int ac, char **av, char **env)
     original_termios(&saved_term);
     while (!stop) {
         set_is_exit(0);
-        input = get_shell_input(env, &stop);
+        input = get_shell_input(vars, &stop);
         new_parse_input(input, vars);
     }
     return 0;

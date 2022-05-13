@@ -79,12 +79,12 @@ static char *get_command(int *stop, char **env)
         if (send)
            put_in_buffer(c, &input);
     }
-    tcsetattr(0, TCSANOW, original_termios(NULL));
+    isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
     isatty(0) ? write(1, "\n\r", 2) : 0;
     return input.buffer;
 }
 
-char *get_shell_input(char **env, int *stop)
+char *get_shell_input(env_t *vars, int *stop)
 {
     char *str = my_strdup("");
 
@@ -95,10 +95,11 @@ char *get_shell_input(char **env, int *stop)
             open_stdin();
         }
         if (isatty(0))
-            print_input(env);
-        str = get_command(stop, env);
+            print_input(vars->env);
+        str = get_command(stop, vars->env);
         if (!str) {
-            free_str_array(env, 1);
+            my_free("PPppp", vars->vars, vars->env, vars->aliases,
+            vars->history, vars);
             print("%s", isatty(get_stdin()) ? "exit\n" : "");
             exit(0);
         }

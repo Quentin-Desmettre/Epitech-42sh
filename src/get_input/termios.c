@@ -20,9 +20,10 @@ char *end_command(input_t *input)
 {
     if (input->buffer)
         free(input->buffer);
-    if (isatty(0))
+    if (isatty(0)) {
         write(1, "\n\r", 2);
-    tcsetattr(0, TCSANOW, original_termios(NULL));
+        tcsetattr(0, TCSANOW, original_termios(NULL));
+    }
     return NULL;
 }
 
