@@ -11,7 +11,7 @@ command_t *create_command(void)
 {
     command_t *cmd = malloc(sizeof(command_t));
 
-    cmd->args = NULL;
+    cmd->args = calloc(1, sizeof(char *));
     cmd->input_fd = -1;
     cmd->input_file = NULL;
     cmd->output_fd = -1;

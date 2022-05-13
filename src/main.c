@@ -42,6 +42,8 @@ static void parse_input(char const *input, env_t *vars)
     }
 }
 
+void new_parse_input(char const *input, env_t *vars);
+
 int main(int ac, char **av, char **env)
 {
     char *input;
@@ -58,7 +60,7 @@ int main(int ac, char **av, char **env)
     while (!stop) {
         set_is_exit(0);
         input = get_shell_input(vars->env, &stop);
-        parse_input(input, vars);
+        new_parse_input(input, vars);
     }
     return get_last_exit();
 }
