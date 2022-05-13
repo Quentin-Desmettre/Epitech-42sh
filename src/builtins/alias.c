@@ -15,7 +15,7 @@ void print_alias(list_t **c, int fd)
     if (*c == 0)
         return;
     do {
-        cmd = tmp->data; 
+        cmd = tmp->data;
         dprintf(fd, "%s\t%s\n", cmd->name, cmd->value);
         tmp = tmp->next;
     } while (tmp != *c);
@@ -69,7 +69,7 @@ void add_alias(char **args, list_t **c, int is_pipe)
             free(cmd->value);
             cmd->value = strdup(new->value);
             rm_alias(new);
-            return; 
+            return;
         }
         if (strcmp(cmd->name, args[1]) < 0) {
             append_node(&tmp, new);

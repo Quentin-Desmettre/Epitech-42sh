@@ -8,7 +8,6 @@
 #include "minishell.h"
 #include <glob.h>
 
-
 void rm_alias(void *alias)
 {
     replace_t *tmp = alias;

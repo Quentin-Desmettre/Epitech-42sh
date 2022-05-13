@@ -43,7 +43,7 @@ env_t *init_vars(char **env)
 {
     env_t *vars = malloc(sizeof(env_t));
 
-    memset(vars, 0, sizeof(env_t));
+    my_memset(vars, 0, sizeof(env_t));
     vars->env = init_env(env);
     vars->aliases = init_alias();
     vars->vars = init_local();
