@@ -75,12 +75,12 @@ void *params[6], char const *command)
     int *fds = params[0];
     int *pids = params[1];
     char ***env = params[3];
-    list_t **all_commands = params[4];
-    list_t **commands = params[5];
+    // list_t **all_commands = params[4];
+    // list_t **commands = params[5];
     char **args = dup_word_array(cur->args);
 
-    destroy_list(all_commands, free);
-    destroy_list(commands, free_command);
+    //destroy_list(all_commands, free);
+    //destroy_list(commands, free_command);
     signal(SIGINT, SIG_DFL);
     if (!redirect_pipe(fds)) {
         free(pids);

@@ -20,17 +20,6 @@ static int flush_stdin(char *err_mess)
     return 1;
 }
 
-static char **parse_input(char *input)
-{
-    char **word_parse = NULL;
-    char *str_separator = ";&|";
-
-    input = clear_str(input);
-    input = add_separator(str_separator, input);
-    word_parse = str_to_word_array(input, " ");
-    return (word_parse);
-}
-
 void new_parse_input(char const *input, env_t *vars);
 
 int main(int ac, char **av, char **env)
@@ -50,7 +39,7 @@ int main(int ac, char **av, char **env)
     while (!stop) {
         set_is_exit(0);
         input = get_shell_input(env, &stop);
-        tmp = parse_input(input);
+        new_parse_input(input, vars);
     }
     return 0;
 }

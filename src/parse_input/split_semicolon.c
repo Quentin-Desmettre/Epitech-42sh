@@ -7,28 +7,7 @@
 
 #include "minishell.h"
 
-#define AND_TYPE 0
-#define OR_TYPE 1
-#define NO_TYPE 2
-
-typedef struct {
-    int link_type;
-    char **words;
-} command_link_t;
-
-void m_append_str_array(char ***array, char *new_str, int dup_str)
-{
-    int len = my_str_array_len(*array);
-    char **new = realloc(*array, ((len + 1) * sizeof(char *)));
-
-    new[len] = new_str;
-    if (dup_str)
-        new[len] = my_strdup(new_str);
-    new[len + 1] = NULL;
-    *array = new;
-}
-
-list_t *get_command_lists(char **words, char **err_mess)
+static list_t *get_command_lists(char **words, char **err_mess)
 {
     list_t *commands = NULL;
     command_t *tmp = create_command();
@@ -89,13 +68,17 @@ list_t *get_command_lists(char **words, char **err_mess)
             }
             tmp->redir_type += REDIR_OUT;
             tmp->output_file = NULL;
-            if (!words[i + 1] || !tmp->args[0] || !my_strcmp(words[i + 1], "|")) {
+            if (!words[i + 1] || !tmp->args[0] ||
+            !my_strcmp(words[i + 1], "|")) {
                 *err_mess = NULL_CMD;
                 return NULL;
             }
             append_node(&commands, tmp);
             tmp = create_command();
             tmp->redir_type += REDIR_IN;
+        } else if (contain_only(words[i], "&| \t\n")) {
+            *err_mess = NULL_CMD;
+            return NULL;
         } else {
             append_str_array(&tmp->args, strdup(words[i]));
         }
@@ -109,30 +92,92 @@ list_t *get_command_lists(char **words, char **err_mess)
     return commands;
 }
 
-command_link_t *create_command_link(int type, char **words)
+static command_link_t *create_command_link(int type, char **words)
 {
     command_link_t *c = malloc(sizeof(command_link_t));
+    char *err_mess = NULL;
 
     c->link_type = type;
-    c->words = words;
+    c->commands = get_command_lists(words, &err_mess);
+    if (!c->commands || err_mess) {
+        dprint(2, "%s\n", err_mess ? err_mess : "Invalid null command.");
+        free(c);
+        return NULL;
+    }
     return c;
 }
 
-char **split_input(char const *input)
+static int is_prev_valid(char **words, int current)
 {
-    return my_str_to_word_array(input, " \t\n");
+    if (!current)
+        return 0;
+    if (contain_only(words[current - 1], "|&; \t\n"))
+        return 0;
+    return 1;
 }
 
-list_t *new_split_semicolons(char const *input)
+static int is_next_valid(char **words, int current)
 {
-    char **words = split_input(input);
+    if (!words[current + 1])
+        return 0;
+    if (contain_only(words[current + 1], "|&; \t\n"))
+        return 0;
+    return 1;
+}
+
+static list_t *split_separators(char **words)
+{
+    list_t *commands = NULL;
+    char **tmp = calloc(1, sizeof(char *));
+    command_link_t *link;
+
+    for (int i = 0; words[i]; i++) {
+        if (!strcmp(words[i], "&&")) {
+            if (!is_prev_valid(words, i) || !is_next_valid(words, i)) {
+                dprint(2, "Invalid null command.\n");
+                return NULL;
+            }
+            link = create_command_link(AND_TYPE, tmp);
+            if (!link)
+                return NULL;
+            append_node(&commands, link);
+            tmp = calloc(1, sizeof(char *));
+            continue;
+        }
+        if (!strcmp(words[i], "||")) {
+            if (!is_prev_valid(words, i) || !is_next_valid(words, i)) {
+                dprint(2, "Invalid null command.\n");
+                return NULL;
+            }
+            link = create_command_link(OR_TYPE, tmp);
+            if (!link)
+                return NULL;
+            append_node(&commands, link);
+            tmp = calloc(1, sizeof(char *));
+            continue;
+        }
+        append_str_array(&tmp, strdup(words[i]));
+    }
+    if (tmp[0]) {
+        link = create_command_link(NO_TYPE, tmp);
+        if (!link)
+            return NULL;
+        append_node(&commands, link);
+    }
+    return commands;
+}
+
+static list_t *split_semicolonss(char **words)
+{
     list_t *commands = NULL;
     char **tmp = calloc(1, sizeof(char *));
 
     for (int i = 0; words[i]; i++) {
         if (contain_only(words[i], "; \t\n")) {
-            append_node(&commands, tmp);
-            tmp = calloc(1, sizeof(char *));
+            if (tmp[0]) {
+                append_node(&commands, tmp);
+                tmp = calloc(1, sizeof(char *));
+            }
             continue;
         }
         append_str_array(&tmp, strdup(words[i]));
@@ -142,91 +187,62 @@ list_t *new_split_semicolons(char const *input)
     return commands;
 }
 
-list_t *split_separators(char **words)
+static void exec_command_list(list_t *commands, env_t *vars)
 {
-    list_t *commands = NULL;
-    char **tmp = calloc(1, sizeof(char *));
-
-    for (int i = 0; words[i]; i++) {
-        if (!strcmp(words[i], "&&")) {
-            append_node(&commands, create_command_link(AND_TYPE, tmp));
-            tmp = calloc(1, sizeof(char *));
-            continue;
-        }
-        if (!strcmp(words[i], "||")) {
-            append_node(&commands, create_command_link(OR_TYPE, tmp));
-            tmp = calloc(1, sizeof(char *));
-            continue;
-        }
-        append_str_array(&tmp, strdup(words[i]));
-    }
-    if (tmp[0])
-        append_node(&commands, create_command_link(NO_TYPE, tmp));
-    return commands;
-}
-
-void exec_separators(list_t *separators, env_t *vars)
-{
-    list_t *cmds;
-    list_t *begin = separators;
+    list_t *begin = commands;
     command_link_t *link;
 
-    if (!separators)
-        return;
     do {
-        link = separators->data;
-        cmds = get_command_lists(link->words, NULL);
-        exec_commands(cmds, vars, &separators);
+        link = commands->data;
+        exec_commands(link->commands, vars, &link->commands);
         if (link->link_type == AND_TYPE && get_last_exit() != 0)
             break;
         if (link->link_type == OR_TYPE && get_last_exit() == 0)
             break;
         if (link->link_type == NO_TYPE)
             break;
-        separators = separators->next;
-    } while (separators != begin);
+        commands = commands->next;
+    } while (commands != begin);
 }
 
-list_t *get_all_links(list_t *semicolons)
+static list_t *split_separatorss(list_t *semicolons)
 {
+    list_t *all_command_links = NULL;
     list_t *begin = semicolons;
-    list_t *links = NULL;
-    list_t *tmp;
+    list_t *separated;
 
-    if (!semicolons)
-        return NULL;
     do {
-        tmp = split_separators(semicolons->data);
-        if (!tmp)
+        separated = split_separators(semicolons->data);
+        if (!separated)
             return NULL;
-        append_node(&links, tmp);
+        append_node(&all_command_links, separated);
         semicolons = semicolons->next;
     } while (begin != semicolons);
-    return links;
+    return all_command_links;
 }
 
-void new_parse_input(char const *input, env_t *vars)
+char **split_words(char *input)
 {
-    list_t *all_links = get_all_links(new_split_semicolons(input));
-    list_t *begin = all_links;
+    char **word_parse = NULL;
+    char *str_separator = ";&|";
 
-    if (!all_links) {
-        set_last_exit(1);
+    input = clear_str(input);
+    input = add_separator(str_separator, input);
+    word_parse = str_to_word_array(input, " ");
+    return (word_parse);
+}
+
+void new_parse_input(char *input, env_t *vars)
+{
+    char **words = split_words(input);
+    list_t *first_split = split_semicolonss(words);
+    list_t *second_split = split_separatorss(first_split);
+    list_t *begin = second_split;
+
+    if (!second_split)
         return;
-    }
     do {
-        exec_separators(all_links->data, vars);
-        all_links = all_links->next;
-    } while (all_links != begin);
-}
-
-list_t *split_semicolons(char const *input)
-{
-    char **words = my_str_to_word_array(input, ";");
-    list_t *list = NULL;
-
-    for (int i = 0; words[i]; i++)
-        append_node(&list, words[i]);
-    free(words);
-    return list;
+        exec_command_list(second_split->data, vars);
+        second_split = second_split->next;
+    } while (second_split != begin);
 }

@@ -59,6 +59,15 @@ int is_exit_glob(int change, int new_val);
     #define IS_DOUBLE(c, i, t) ((c)[i] == (t) && (c)[i + 1] == (t))
     #define IS_DB_REDIR(s, i) (IS_DOUBLE(s, i, '>') || IS_DOUBLE(s, i, '<'))
 
+    #define AND_TYPE 0
+    #define OR_TYPE 1
+    #define NO_TYPE 2
+
+typedef struct {
+    int link_type;
+    list_t *commands;
+} command_link_t;
+
 typedef struct {
     char **args;
     char *input_file;
