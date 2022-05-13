@@ -145,8 +145,6 @@ void check_exit_status_fd(int status, int *has_crashed);
 int main(int ac, char **av, char **env);
 int check_redirections(void *strings[3],
 int *i, list_t **list, command_t **tmp);
-char *get_next_word(char const *cmd, int *start, char **err_mess);
-int can_get_next_word(char const *cmd, int start, char **err_mess);
 int get_heredoc(char const *stop);
 int free_exit(list_t **commands, command_t *tmp, char *cmd, int status);
 char *get_error_message(char *cmd, char const *command, int i, command_t *tmp);

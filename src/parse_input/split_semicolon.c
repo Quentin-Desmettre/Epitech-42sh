@@ -125,45 +125,63 @@ static int is_next_valid(char **words, int current)
     return 1;
 }
 
+int create_link(char **tmp, int type, list_t **commands)
+{
+    command_link_t *link = create_command_link(type, tmp);
+
+    if (!link)
+        return 0;
+    append_node(commands, link);
+    return 1;
+}
+
+int check_and(char **words, int i, char ***tmp, list_t **commands)
+{
+    if (!strcmp(words[i], "&&")) {
+        if (!is_prev_valid(words, i) || !is_next_valid(words, i)) {
+            dprint(2, "Invalid null command.\n");
+            return 0;
+        }
+        if (!create_link(*tmp, AND_TYPE, commands))
+            return 0;
+        *tmp = calloc(1, sizeof(char *));
+        return 2;
+    }
+    return 1;
+}
+
+int check_or(char **words, int i, char ***tmp, list_t **commands)
+{
+    if (!strcmp(words[i], "||")) {
+        if (!is_prev_valid(words, i) || !is_next_valid(words, i)) {
+            dprint(2, "Invalid null command.\n");
+            return 0;
+        }
+        if (!create_link(*tmp, OR_TYPE, commands))
+            return 0;
+        tmp = calloc(1, sizeof(char *));
+        return 2;
+    }
+    return 1;
+}
+
 static list_t *split_separators(char **words)
 {
     list_t *commands = NULL;
     char **tmp = calloc(1, sizeof(char *));
-    command_link_t *link;
+    int status;
 
     for (int i = 0; words[i]; i++) {
-        if (!strcmp(words[i], "&&")) {
-            if (!is_prev_valid(words, i) || !is_next_valid(words, i)) {
-                dprint(2, "Invalid null command.\n");
-                return NULL;
-            }
-            link = create_command_link(AND_TYPE, tmp);
-            if (!link)
-                return NULL;
-            append_node(&commands, link);
-            tmp = calloc(1, sizeof(char *));
-            continue;
-        }
-        if (!strcmp(words[i], "||")) {
-            if (!is_prev_valid(words, i) || !is_next_valid(words, i)) {
-                dprint(2, "Invalid null command.\n");
-                return NULL;
-            }
-            link = create_command_link(OR_TYPE, tmp);
-            if (!link)
-                return NULL;
-            append_node(&commands, link);
-            tmp = calloc(1, sizeof(char *));
-            continue;
-        }
-        append_str_array(&tmp, strdup(words[i]));
-    }
-    if (tmp[0]) {
-        link = create_command_link(NO_TYPE, tmp);
-        if (!link)
+        if (!(status = check_and(words, i, &tmp, &commands)))
             return NULL;
-        append_node(&commands, link);
+        if (status == 1 &&
+        !(status = check_or(words, i, &tmp, &commands)))
+            return NULL;
+        if (status == 1)
+            append_str_array(&tmp, strdup(words[i]));
     }
+    if (tmp[0] && !create_link(tmp, NO_TYPE, &commands))
+        return NULL;
     return commands;
 }
 
