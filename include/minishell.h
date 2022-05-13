@@ -171,4 +171,10 @@ void set_var(char ***var, int index, char const *key, char const *val);
 void create_var(char ***var, char const *key, char const *val);
 int var_args_valid(char **args);
 
+//parse_input
+int contain_separator(char str, const char *specifier);
+char *clear_str(char *string);
+char **str_to_word_array(char const *str, char *delimiters);
+char *add_separator(char *separator, char *input);
+
 #endif
