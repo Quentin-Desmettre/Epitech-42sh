@@ -37,7 +37,7 @@ static void keep_space_in_str(char **string, int *i, char *separator)
 
     if ((*string)[*i + 1])
         second_index = contain_separator((*string)[*i + 1], separator);
-    if (first_index == second_index && first_index != -1) {
+    if (first_index == second_index && first_index != -1 && (*string)[*i + 1]) {
         (*string)[*i] = '\\';
         (*string)[*i + 1] = ' ';
         while (first_index == second_index && (*string)[*i]) {
@@ -71,9 +71,12 @@ char *clear_str(char *string)
     size_t nbr_separator = 0;
 
     for (int i = 0; string[i]; i++)
+        string[i] = (string[i] == '\t') ? ' ' : string[i];
+    for (int i = 0; string[i]; i++)
         keep_space_in_str(&string, &i, separator);
     count_separator_number(&nbr_separator, string, separator);
-    tmp = malloc(sizeof(char) * (size - nbr_separator + 1));
+    tmp = malloc(sizeof(char) * (size + 1));
+    my_memset(tmp, 0, (int)size);
     for (int i = 0; string[i]; i++)
         if (contain_separator(string[i], separator) < 0)
             return_clean_string(&tmp, string, i, &index);

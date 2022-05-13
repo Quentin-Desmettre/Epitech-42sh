@@ -27,7 +27,6 @@ static char **parse_input(char *input)
 
     input = clear_str(input);
     input = add_separator(str_separator, input);
-    puts(input);
     word_parse = str_to_word_array(input, " ");
     return (word_parse);
 }
