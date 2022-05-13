@@ -47,12 +47,13 @@ void put_in_buffer(char c, input_t *buf)
         buf->buf_size--;
         buf->key_pos--;
     } else {
-        if (buf->buf_size >= buf->buff_limit) {
+        if (buf->buf_size >= buf->buff_limit - 1) {
             buf->buffer = realloc(buf->buffer, buf->buf_size * 2);
             buf->buff_limit = buf->buf_size * 2;
         }
         for (int i = buf->buf_size; i > buf->key_pos; i--)
             buf->buffer[i] = buf->buffer[i - 1];
+        buf->buffer[buf->buf_size + 1] = 0;
         buf->buffer[buf->key_pos] = c;
         buf->buf_size++;
         buf->key_pos++;
@@ -99,7 +100,7 @@ char *get_shell_input(char **env, int *stop)
         if (!str) {
             free_str_array(env, 1);
             print("%s", isatty(get_stdin()) ? "exit\n" : "");
-            exit(get_last_exit());
+            exit(0);
         }
     }
     return str;

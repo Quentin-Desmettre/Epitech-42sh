@@ -52,5 +52,5 @@ int main(int ac, char **av, char **env)
         input = get_shell_input(env, &stop);
         tmp = parse_input(input);
     }
-    return get_last_exit();
+    return 0;
 }
