@@ -38,7 +38,7 @@ static void parse_input(char const *input, env_t *vars)
     if (is_exit()) {
         free_vars(vars);
         write(2, "exit\n", 5);
-        exit(get_last_exit());
+        exit(0);
     }
 }
 
@@ -57,8 +57,8 @@ int main(int ac, char **av, char **env)
     original_termios(&saved_term);
     while (!stop) {
         set_is_exit(0);
-        input = get_shell_input(vars->env, &stop);
+        input = get_shell_input(vars, &stop);
         parse_input(input, vars);
     }
-    return get_last_exit();
+    return 0;
 }
