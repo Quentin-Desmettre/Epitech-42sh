@@ -53,7 +53,6 @@ void put_in_buffer(char c, input_t *buf)
         }
         for (int i = buf->buf_size; i > buf->key_pos; i--)
             buf->buffer[i] = buf->buffer[i - 1];
-        buf->buffer[buf->buf_size + 1] = 0;
         buf->buffer[buf->key_pos] = c;
         buf->buf_size++;
         buf->key_pos++;
