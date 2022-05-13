@@ -27,14 +27,11 @@ char get_char_wait_for_keypress(input_t *buffer, int *send)
         c = getchar();
         if (c == 91) {
             c = getchar();
-            if (c == 68 && buffer->key_pos > 0)
-                buffer->key_pos--;
-            if (c == 67 && buffer->key_pos < buffer->buf_size)
-                buffer->key_pos++;
-            if (c == 51) {
-                c = getchar();
-                c == 126 ? suppr_char(buffer) : 0;
-            }
+            c == 68 && buffer->key_pos > 0 ? buffer->key_pos-- : 0;
+            c == 67 && buffer->key_pos < buffer->buf_size ?
+            buffer->key_pos++ : 0;
+            c == 51 ? c = getchar() : 0;
+            c == 126 ? suppr_char(buffer) : 0;
         }
     }
     return c;

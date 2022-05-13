@@ -51,4 +51,3 @@ void print_buffer(input_t *buf, char **env)
     for (int i = 0; i < buf->buf_size - buf->key_pos; i++)
         write(1, go_left, 3);
 }
-
