@@ -100,7 +100,7 @@ char *get_shell_input(char **env, int *stop)
         if (!str) {
             free_str_array(env, 1);
             print("%s", isatty(get_stdin()) ? "exit\n" : "");
-            exit(get_last_exit());
+            exit(0);
         }
     }
     return str;
