@@ -30,6 +30,7 @@ SRC = \
 	others/my_sort_int_array.c                  \
 	others/my_sort_word_array.c                 \
 	others/my_swap.c                            \
+	others/my_free.c                            \
 	strmanip/append_char.c                      \
 	strmanip/contain.c                          \
 	strmanip/my_memset.c                        \
