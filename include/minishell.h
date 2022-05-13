@@ -146,7 +146,7 @@ list_t *split_semicolons(char const *input);
 char const *get_field(char **env, char const *field);
 void print_input(char **env);
 void redirect_sigint(int id);
-char *get_shell_input(char **env, int *stop);
+char *get_shell_input(env_t *vars, int *stop);
 struct termios *original_termios(struct termios *new);
 int get_input_len(char **env);
 char *end_command(input_t *input);
