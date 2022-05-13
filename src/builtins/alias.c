@@ -62,7 +62,7 @@ void add_alias(char **args, list_t **c, int is_pipe)
 
     set_value(args, new);
     if (*c == 0)
-        append_node(c, new);
+        return append_node(c, new);
     for (int i = 0; *c != 0 && (i == 0 || tmp != *c); tmp = tmp->next, i++) {
         cmd = tmp->data;
         if (strcmp(cmd->name, args[1]) == 0) {
