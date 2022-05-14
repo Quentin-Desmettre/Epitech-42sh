@@ -35,20 +35,39 @@ void reset_input_buffer(input_t *buf)
     buf->line_offset = 0;
 }
 
+void clear_term(input_t *buf, struct winsize w, char **env)
+{
+    int tot_size = buf->buf_size + 1 + get_input_len(env);
+
+    write(1, "\33[u", 3);
+    write(1, "\33[2K\r", 5);
+    for (int i = 0; i < buf->line_offset; i++)
+        write(1, "\033[A\33[2K\r", 8);
+    print_input(env);
+    write(1, buf->buffer, buf->buf_size);
+    write(1, "\33[s", 3);
+    buf->line_offset = tot_size / w.ws_col;
+}
+
 void print_buffer(input_t *buf, char **env)
 {
-    char go_left[3] = {27, 91, 68};
+    int tot_size = buf->buf_size + 1 + get_input_len(env);
+    int index = buf->key_pos + 2 + get_input_len(env);
+    int cursor_l = 0;
     struct winsize w;
 
     if (!isatty(0))
         return;
-    write(1, "\33[2K\r", 5);
-    print_input(env);
-    for (int i = 0; i < buf->line_offset - get_input_len(env); i++)
-        write(1, "\033[A\33[2K\r", 8);
-    write(1, buf->buffer, buf->buf_size);
     ioctl(0, TIOCGWINSZ, &w);
-    buf->line_offset = (buf->buf_size - 1) / w.ws_col;
-    for (int i = 0; i < buf->buf_size - buf->key_pos; i++)
-        write(1, go_left, 3);
+    clear_term(buf, w, env);
+    cursor_l = (buf->buf_size - buf->key_pos) % w.ws_col;
+    for (int i = 0; i < buf->line_offset - (index / w.ws_col); i++)
+        write(1, "\033[A\r", 3);
+    if (cursor_l > tot_size % w.ws_col + 1) {
+        for (int i = 0; i < w.ws_col - cursor_l; i++)
+            write(1, "\033[C\r", 3);
+    } else {
+        for (int i = 0; i < cursor_l; i++)
+            write(1, "\033[D\r", 3);
+    }
 }

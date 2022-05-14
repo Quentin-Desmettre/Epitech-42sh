@@ -94,8 +94,6 @@ char *get_shell_input(env_t *vars, int *stop)
             set_reset_buffer(0);
             open_stdin();
         }
-        if (isatty(0))
-            print_input(vars->env);
         str = get_command(stop, vars->env);
         if (!str) {
             my_free("PPppp", vars->vars, vars->env, vars->aliases,
