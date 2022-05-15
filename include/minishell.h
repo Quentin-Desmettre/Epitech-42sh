@@ -19,6 +19,7 @@
     #include <stdio.h>
     #include <termios.h>
     #include <stdlib.h>
+    #include <string.h>
 
     #define BUFFER_SIZE 10
 
@@ -104,6 +105,11 @@ typedef struct {
     char **env;
 } env_t;
 
+typedef struct {
+    char *line;
+    int length;
+} backtick_t;
+
 env_t *init_vars(char **env);
 void cd_pipe(char **args, char ***env, int o_fd, int is_pipe);
 int print_flags(int *flags, char const *home, int len_home, int o_fd);
@@ -152,7 +158,6 @@ list_t *get_command_list(char const *command, char **err_mess);
 list_t *split_semicolons(char const *input);
 char const *get_field(char **env, char const *field);
 void print_input(char **env);
-void redirect_sigint(int id);
 char *get_shell_input(env_t *vars, int *stop);
 struct termios *original_termios(struct termios *new);
 int get_input_len(char **env);
@@ -160,6 +165,10 @@ char *end_command(input_t *input);
 void print_buffer(input_t *buf, char **env);
 void reset_input_buffer(input_t *buf);
 void free_vars(env_t *vars);
+int get_final_fd(void);
+void set_final_fd(int fd);
+void new_parse_input(char *input, env_t *vars);
+int parse_for_backticks(char **input, env_t *vars);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);

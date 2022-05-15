@@ -21,8 +21,8 @@ SRC = \
 	src/globals/reset_buffer.c                         \
 	src/globals/std_in.c                               \
 	src/globals/is_exit.c                              \
+	src/globals/out_fd.c 							   \
 	src/print_input.c                                  \
-	src/redirect.c                                     \
 	src/get_input/shell_input.c                        \
 	src/get_input/termios.c                            \
 	src/main.c                                         \
@@ -36,6 +36,7 @@ SRC = \
 	src/parse_input/clear_input_str.c                  \
 	src/parse_input/edit_input.c                       \
 	src/parse_input/str_to_word_array_input.c          \
+	src/backticks/backticks.c                          \
 	src/init_vars.c
 
 OBJ = $(SRC:.c=.o)

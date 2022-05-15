@@ -90,10 +90,6 @@ char *get_shell_input(env_t *vars, int *stop)
 
     while (str[0] == 0) {
         free(str);
-        if (is_reset_buf()) {
-            set_reset_buffer(0);
-            open_stdin();
-        }
         if (isatty(0))
             print_input(vars->env);
         str = get_command(stop, vars->env);

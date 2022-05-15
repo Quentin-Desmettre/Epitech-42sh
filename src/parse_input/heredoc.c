@@ -43,7 +43,7 @@ static char *getline_heredoc(char const *pattern)
             break;
         c ? append_char(&line, tmp, 1) : 0;
     }
-    signal(SIGINT, redirect_sigint);
+    signal(SIGINT, SIG_DFL);
     return line;
 }
 
