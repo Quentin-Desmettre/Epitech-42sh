@@ -30,10 +30,8 @@ void print_one_alias(list_t **c, int fd, char *av)
         return;
     for (int i = 0; i == 0 || tmp != *c; i++) {
         cmd = tmp->data;
-        if (strcmp(cmd->name, av) == 0) {
+        if (search_pattern(av, cmd->name))
             dprintf(fd, "%s\t%s\n", cmd->name, cmd->value);
-            return;
-        }
         tmp = tmp->next;
     }
 }
@@ -60,21 +58,23 @@ void add_alias(char **args, list_t **c, int is_pipe)
     replace_t *cmd = 0;
     replace_t *new = malloc(sizeof(replace_t));
 
+    if (is_pipe)
+        return;
     set_value(args, new);
-    if (*c == 0)
-        return append_node(c, new);
+    if (*c == 0 || strcmp(((replace_t *)tmp->data)->name, args[1]) > 0) {
+        append_node(c, new);
+        *c = (*c)->prev;
+        return;
+    }
     for (int i = 0; *c != 0 && (i == 0 || tmp != *c); tmp = tmp->next, i++) {
         cmd = tmp->data;
         if (strcmp(cmd->name, args[1]) == 0) {
             free(cmd->value);
             cmd->value = strdup(new->value);
-            rm_alias(new);
-            return;
+            return rm_alias(new);
         }
-        if (strcmp(cmd->name, args[1]) < 0) {
-            append_node(&tmp, new);
-            return;
-        }
+        if (strcmp(cmd->name, args[1]) < 0)
+            return append_node(&tmp, new);
     }
 }
 
