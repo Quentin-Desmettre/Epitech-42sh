@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskBlog</title>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">T.A 42sh le <div id="current_date"></h1>
+        <progress value = {{test}} max = {{all}}> </progress>
+        <h1>your are passing {{test}}</h1>
+    </div>
+   {% set passedd = passedf%}
+   {% set lenghtt = lenght%}
+   {%for i in range(0, len)%}
+        {% set lenghtt = lenghtt + 1%}
+        <p>lenght = {{lenghtt}}</p>
+    <h4 class="cat"><strong>{{cate[i]}}</strong></h4>
+    {%for a in range(0, lent)%}
+        {%if cate[i] == tabb[a].cat%}
+            {%set lenght = lenght + 1%}
+        {%endif%}
+    {%endfor%}
+    {%for a in range(0, lent)%}
+        {%if cate[i] == tabb[a].cat and tabb[a].test_passed == 1%}
+            {% set passedd = passedd + 1%}
+            <p>{{passedd}}</p>
+        {%endif%}
+    {%endfor%}
+    <p>{{passedf}}</p>
+    <progress value = {{passedf}} max = {{lenght}}> </progress>
+    {%for j in range(0, lent)%}
+        {%if tabb[j].cat == cate[i]%}
+            {%if tabb[j].test_passed == 1%}
+                <p class="passed"><strong>{{tabb[j].name}}</strong>   test passed</p>
+            {%endif%}
+            {%if tabb[j].test_passed == 0%}
+                <p class="wrong"><strong>{{tabb[j].name}}</strong>   test not passed</p>
+            {%endif%}
+        {%endif%}
+    {%endfor%}
+{%endfor%}
+</body>
+</html>
+<script>
+    document.getElementById("current_date").innerHTML = Date();
+</script>
+<style>r
+    .cat{
+        text-align: center;
+    }
+    .passed{
+        text-align: center;
+        color: green;
+    }
+    .wrong{
+        text-align: center;
+        color: red;
+    }
+    body {
+        background-color: aquamarine;
+    }
+    .header {
+        background-color: aquamarine;
+    }
+</style>
