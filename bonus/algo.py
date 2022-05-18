@@ -1,7 +1,7 @@
 import os
 import sys
 from flask import Flask, render_template
-
+from colorama import Fore, Back, Style
 
 class prog():
     def __init__(self):
@@ -21,12 +21,13 @@ class test():
         self.name = name
     def check_answer(self, prog):
         if self.test == self.answer:
-            print("test: ",self.name," passed")
+            print(Fore.GREEN + self.name,":  passed")
             prog.passed += 1
             self.test_passed = 1
         else:
             self.test_passed = 0
             prog.wrong += 1
+            print(Fore.RED + self.name,":  not passed")
             file_test_failed = open('./test_f/' + self.name, "w")
             file_test_failed.write("what we want :\n")
             file_test_failed.write(self.test)
@@ -67,7 +68,6 @@ for i in range (len(all_test) - 1):
         test_all.tab.append(test(c, b, cat_act))
 
 for j in range (0, len(test_all.tab)):
-    print(test_all.tab[j].cat)
     test_all.tab[j].test_cmd = test_all.tab[j].test_cmd + '> test'
     os.system(test_all.tab[j].test_cmd)
     test_all.tab[j].answer_cmd = 'echo "' + test_all.tab[j].answer_cmd + '" | ../42sh > answer'
@@ -79,4 +79,7 @@ for j in range (0, len(test_all.tab)):
     file_answer.close()
     file_test.close()
     test_all.tab[j].check_answer(test_all)
-site()
+
+print(Style.RESET_ALL)
+print(test_all.wrong + test_all.passed, "tests", test_all.passed, "passed")
+# site()

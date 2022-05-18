@@ -3,6 +3,5 @@
     "test echo"={echo bonjour}
     "test ls"={ls}
 &Mandatory minishell2:
-    "test1;"={cd .. ; echo bonjour}
     "test2;"={cd ..; cd -; echo aa}
 &cool:
