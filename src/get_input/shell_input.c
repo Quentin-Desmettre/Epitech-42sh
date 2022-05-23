@@ -88,6 +88,7 @@ char *get_shell_input(env_t *vars, int *stop)
 {
     char *str = my_strdup("");
 
+    write(1, "\33[s", 3);
     while (str[0] == 0) {
         free(str);
         if (is_reset_buf()) {

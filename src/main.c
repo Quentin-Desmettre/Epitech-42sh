@@ -55,7 +55,6 @@ int main(int ac, char **av, char **env)
     open_stdin();
     tcgetattr(0, &saved_term);
     original_termios(&saved_term);
-    write(1, "\33[s", 3);
     while (!stop) {
         set_is_exit(0);
         input = get_shell_input(vars, &stop);
