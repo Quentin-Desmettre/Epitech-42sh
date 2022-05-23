@@ -38,10 +38,10 @@ void var_setter(char ***var, int index, char **args)
 int set(char **args, char ***var, int o_fd, int is_pipe)
 {
     if ((args[0][0] < 'A' || (args[0][0] > 'Z' && args[0][0] < 'a') ||
-    (args[0][0] > 'z')) && args[1][0] != '_') {
+    (args[0][0] > 'z')) && args[0][0] != '_') {
         dprint(2, "set: Variable name must begin with a letter.\n");
         return 1;
-    } else if (!str_is_alphanum(args[0])) {
+    } else if (!str_is_alphanum(args[0] + 1)) {
         dprint(2, "set: "
         "Variable name must contain alphanumeric characters.\n");
         return 1;
