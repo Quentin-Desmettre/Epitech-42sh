@@ -91,16 +91,14 @@ char *get_shell_input(env_t *vars, int *stop)
     write(1, "\33[s", 3);
     while (str[0] == 0) {
         free(str);
-        if (is_reset_buf()) {
-            set_reset_buffer(0);
-            open_stdin();
-        }
+        if (isatty(0))
+            print_input(vars->env);
         str = get_command(stop, vars->env);
         if (!str) {
             my_free("PPppp", vars->vars, vars->env, vars->aliases,
             vars->history, vars);
             print("%s", isatty(get_stdin()) ? "exit\n" : "");
-            exit(get_last_exit());
+            exit(0);
         }
     }
     return str;

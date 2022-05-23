@@ -19,7 +19,6 @@ static void wait_pids(int *pids, int size, int cannot_find)
         }
     if (has_crashed)
         write(2, "\n", 1);
-    signal(SIGINT, redirect_sigint);
     if (cannot_find)
         set_last_exit(1);
     free(pids);

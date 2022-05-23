@@ -27,7 +27,6 @@ int place_in_local(char **new, char ***array, int i, char *val)
 void append_var_array(char ***array, char *val)
 {
     int i = 0;
-    int j;
     char **new = malloc(sizeof(char *) * (my_str_array_len(*array) + 2));
     int cmp;
     char *tmp;
@@ -40,7 +39,7 @@ void append_var_array(char ***array, char *val)
             cmp = place_in_local(new, array, i, val);
     }
     new[i] = val;
-    for (i; (*array)[i]; i++)
+    for (; (*array)[i]; i++)
         new[i + 1] = (*array)[i];
     new[i + 1] = NULL;
     free(*array);

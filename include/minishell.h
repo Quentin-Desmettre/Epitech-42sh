@@ -19,6 +19,7 @@
     #include <stdio.h>
     #include <termios.h>
     #include <stdlib.h>
+    #include <string.h>
 
     #define BUFFER_SIZE 10
 
@@ -59,6 +60,15 @@ int is_exit_glob(int change, int new_val);
     #define IS_DOUBLE(c, i, t) ((c)[i] == (t) && (c)[i + 1] == (t))
     #define IS_DB_REDIR(s, i) (IS_DOUBLE(s, i, '>') || IS_DOUBLE(s, i, '<'))
 
+    #define AND_TYPE 0
+    #define OR_TYPE 1
+    #define NO_TYPE 2
+
+typedef struct {
+    int link_type;
+    list_t *commands;
+} command_link_t;
+
 typedef struct {
     char **args;
     char *input_file;
@@ -94,6 +104,11 @@ typedef struct {
     char **vars;
     char **env;
 } env_t;
+
+typedef struct {
+    char *line;
+    int length;
+} backtick_t;
 
 env_t *init_vars(char **env);
 void cd_pipe(char **args, char ***env, int o_fd, int is_pipe);
@@ -136,8 +151,6 @@ void check_exit_status_fd(int status, int *has_crashed);
 int main(int ac, char **av, char **env);
 int check_redirections(void *strings[3],
 int *i, list_t **list, command_t **tmp);
-char *get_next_word(char const *cmd, int *start, char **err_mess);
-int can_get_next_word(char const *cmd, int start, char **err_mess);
 int get_heredoc(char const *stop);
 int free_exit(list_t **commands, command_t *tmp, char *cmd, int status);
 char *get_error_message(char *cmd, char const *command, int i, command_t *tmp);
@@ -145,7 +158,6 @@ list_t *get_command_list(char const *command, char **err_mess);
 list_t *split_semicolons(char const *input);
 char const *get_field(char **env, char const *field);
 void print_input(char **env);
-void redirect_sigint(int id);
 char *get_shell_input(env_t *vars, int *stop);
 struct termios *original_termios(struct termios *new);
 int get_input_len(char **env);
@@ -153,6 +165,10 @@ char *end_command(input_t *input);
 void print_buffer(input_t *buf, char **env);
 void reset_input_buffer(input_t *buf);
 void free_vars(env_t *vars);
+int get_final_fd(void);
+void set_final_fd(int fd);
+void new_parse_input(char *input, env_t *vars);
+int parse_for_backticks(char **input, env_t *vars);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);
@@ -170,5 +186,11 @@ void append_var_array(char ***array, char *val);
 void set_var(char ***var, int index, char const *key, char const *val);
 void create_var(char ***var, char const *key, char const *val);
 int var_args_valid(char **args);
+
+//parse_input
+int contain_separator(char str, const char *specifier);
+char *clear_str(char *string);
+char **str_to_word_array(char const *str, char *delimiters);
+char *add_separator(char *separator, char *input);
 
 #endif

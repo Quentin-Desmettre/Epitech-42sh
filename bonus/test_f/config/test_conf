@@ -1,0 +1,7 @@
+&Mandatory minishell1:
+    "testcd"={cd ..}
+    "test echo"={echo bonjour}
+    "test ls"={ls}
+&Mandatory minishell2:
+    "test2;"={cd ..; cd -; echo aa}
+&cool:

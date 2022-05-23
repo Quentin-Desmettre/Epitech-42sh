@@ -45,10 +45,10 @@ int set(char **args, char ***var, int o_fd, int is_pipe)
         dprint(2, "set: "
         "Variable name must contain alphanumeric characters.\n");
         return 1;
-    } else {
-        var_setter(var, var_index_of_key(*var, args[0]), args);
-        return 0;
     }
+    if (is_pipe)
+        var_setter(var, var_index_of_key(*var, args[0]), args);
+    return 0;
 }
 
 void setvar_pipe(char **args, char ***var, int o_fd, int is_pipe)

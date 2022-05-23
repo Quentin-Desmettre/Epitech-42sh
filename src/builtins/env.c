@@ -7,6 +7,20 @@
 
 #include "minishell.h"
 
+int exec_builtin_sec(char **args, env_t *vars, int fds[2], int tmp[2])
+{
+    int is_pipe = tmp[0];
+    int index = tmp[1];
+
+    if (index == 6)
+        unalias(args, vars, fds[1], is_pipe);
+    if (index == 7)
+        setvar_pipe(args, &vars->vars, fds[1], is_pipe);
+    if (index == 8)
+        unsetvar_pipe(args, &vars->vars, fds[1], is_pipe);
+    return 0;
+}
+
 int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
 {
     void (*builtin[9])(char **, char ***, int, int) = {
@@ -27,13 +41,7 @@ int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
         exit_pipe(args, is_pipe);
     if (index == 5)
         alias(args, vars, fds[1], is_pipe);
-    if (index == 6)
-        unalias(args, vars, fds[1], is_pipe);
-    if (index == 7)
-        setvar_pipe(args, &vars->vars, fds[1], is_pipe);
-    if (index == 8)
-        unsetvar_pipe(args, &vars->vars, fds[1], is_pipe);
-    return 0;
+    return exec_builtin_sec(args, vars, fds, (int [2]){is_pipe, index});
 }
 
 int is_builtin(char const *word)

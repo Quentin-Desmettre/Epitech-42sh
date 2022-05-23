@@ -5,3 +5,5 @@
 !*/
 !.gitignore
 test
+.idea
+cmake-build-debug
