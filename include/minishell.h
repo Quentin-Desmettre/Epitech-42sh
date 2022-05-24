@@ -64,6 +64,9 @@ int is_exit_glob(int change, int new_val);
     #define OR_TYPE 1
     #define NO_TYPE 2
 
+    #define NOTHING_DONE 1
+    #define CONNECTION_DONE 2
+
 typedef struct {
     int link_type;
     list_t *commands;
@@ -169,6 +172,7 @@ int get_final_fd(void);
 void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
+char *special_input(input_t *input, char c, int *stop);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);
@@ -192,6 +196,7 @@ int contain_separator(char str, const char *specifier);
 char *clear_str(char *string);
 char **str_to_word_array(char const *str, char *delimiters);
 char *add_separator(char *separator, char *input);
+char *get_next_line(char *base);
 
 int globing_all_file(char **env, input_t *input);
 void clear_term(input_t *buf, struct winsize w, char **env);

@@ -62,27 +62,27 @@ void put_in_buffer(char c, input_t *buf)
 
 static char *get_command(int *stop, char **env)
 {
-    int send = 1;
     static struct termios raw;
     input_t input = {0, BUFFER_SIZE, 0, 0, 0};
 
     raw.c_cc[VMIN] = 1;
     tcsetattr(0, TCSANOW, &raw);
-    input.buffer = malloc(sizeof(char) * BUFFER_SIZE);
-    for (char c = 0; ;) {
+    input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
+    for (int c, send = 1; ;) {
         print_buffer(&input, env);
         if (c == 9)
             globing_all_file(env, &input);
         c = get_char_wait_for_keypress(&input, &send);
-        if (c == EOF || c == 4 || c == 3)
-            return end_command(&input);
+        if (c == EOF || c == 3 || (c == 4 && input.buf_size == 0))
+            return special_input(&input, c, stop);
         if (c == '\r' || c == '\n')
             break;
-        if (send)
+        if (send && c != 4)
            put_in_buffer(c, &input);
     }
+    isatty(0) ? write(1, "\n\r", 2) : ((*stop) = 1);
     isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
-    isatty(0) ? write(1, "\n\r", 2) : 0;
+    !input.buf_size ? write(1, "\33[s\33[u", 6) : 0;
     return input.buffer;
 }
 
@@ -90,6 +90,8 @@ char *get_shell_input(env_t *vars, int *stop)
 {
     char *str = my_strdup("");
 
+    if (!isatty(0))
+        return get_next_line(str);
     write(1, "\33[s", 3);
     while (str[0] == 0) {
         free(str);

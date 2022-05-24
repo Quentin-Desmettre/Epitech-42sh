@@ -22,7 +22,9 @@ int main(int ac, char **av, char **env)
     while (!stop) {
         set_is_exit(0);
         input = get_shell_input(vars, &stop);
-        if (parse_for_backticks(&input, vars))
+        if (!input)
+            break;
+        if (input[0] && parse_for_backticks(&input, vars))
             new_parse_input(input, vars);
         else
             free(input);
