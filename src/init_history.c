@@ -46,12 +46,10 @@ histo_t *init_node(char *cmd)
 {
     histo_t *ele = malloc(sizeof(histo_t));
 
-    if (ele == NULL)
-        exit(84);
     ele->command = cmd;
     ele->select = 0;
     ele->next = NULL;
-    return ele;
+    return (ele);
 }
 
 void push_node(histo_t *tete, histo_t *boulle)
@@ -86,7 +84,7 @@ void give(char *file, histo_t *head)
     buff[lu] = '\0';
     map = str_to_word_array_my(buff);
     for (int i = 0; map[i] != NULL; i++) {
-        push_node(head, init_node(str_copy_string(map[i])));
+        push_node(head, init_node(strdup(map[i])));
         free(map[i]);
     }
     free(map);

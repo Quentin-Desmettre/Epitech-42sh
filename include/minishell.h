@@ -81,11 +81,10 @@ typedef struct {
     char redir_type;
 } command_t;
 
-typedef struct history
-{
+typedef struct history_s {
     char *command;
     int select;
-    struct history *next;
+    struct history_s *next;
 }histo_t;
 
 typedef struct {
@@ -221,7 +220,7 @@ char *is_down(histo_t *head);
 
 /// \brief append note in lenked list with the new command
 void history_append(char *command, histo_t *head);
-histo_t *init_history();
+histo_t *init_history(void);
 
 /// \brief free linked list for the history
 void free_history_list(histo_t *head, histo_t *temp);

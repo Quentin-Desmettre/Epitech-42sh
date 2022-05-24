@@ -74,7 +74,7 @@ void *params[6], char const *command)
 {
     int *fds = params[0];
     int *pids = params[1];
-    char ***env = params[3];
+    char ***env = &((env_t *)params[3])->env;
     list_t **commands = params[5];
     char **args = dup_word_array(cur->args);
 

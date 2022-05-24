@@ -17,14 +17,12 @@ int main(int ac, char **av, char **env)
     if (ac != 1 || !env || !av)
         return 84;
     vars = init_vars(env);
-    vars->history = init_history();
     tcgetattr(0, &saved_term);
     original_termios(&saved_term);
     while (!stop) {
         set_is_exit(0);
         input = get_shell_input(vars, &stop);
         history_append(input, vars->history);
-        if (parse_for_backticks(&input, vars))
         if (!input)
             break;
         if (input[0] && parse_for_backticks(&input, vars))
