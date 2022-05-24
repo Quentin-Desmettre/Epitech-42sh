@@ -178,6 +178,9 @@ void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
 char *special_input(input_t *input, char c, int *stop);
+void special_char(input_t *input, char c, char **env);
+void suppr_char(input_t *buf);
+
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);
 void rm_alias(void *alias);
@@ -204,7 +207,7 @@ char *get_next_line(char *base);
 
 void globing_all_file(char **env, input_t *input);
 void clear_term(input_t *buf, struct winsize w, char **env);
-void put_in_buffer(char c, input_t *buf);
+void put_in_buffer(char c, input_t *buf, char **env);
 void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd);
 void set_print_tab(char **command, char **env, input_t *input);
 

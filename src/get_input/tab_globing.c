@@ -14,7 +14,7 @@ void replace_buffer(input_t *input, char **command, char **env)
 
     ioctl(0, TIOCGWINSZ, &w);
     for (size_t i = input->buf_size; i < strlen(command[0]); i++)
-        put_in_buffer(command[0][i], input);
+        put_in_buffer(command[0][i], input, env);
     clear_term(input, w, env);
 }
 
