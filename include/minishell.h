@@ -193,4 +193,8 @@ char *clear_str(char *string);
 char **str_to_word_array(char const *str, char *delimiters);
 char *add_separator(char *separator, char *input);
 
+int globing_all_file(char **env, input_t *input);
+void clear_term(input_t *buf, struct winsize w, char **env);
+void put_in_buffer(char c, input_t *buf);
+
 #endif

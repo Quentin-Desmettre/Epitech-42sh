@@ -69,8 +69,10 @@ static char *get_command(int *stop, char **env)
     raw.c_cc[VMIN] = 1;
     tcsetattr(0, TCSANOW, &raw);
     input.buffer = malloc(sizeof(char) * BUFFER_SIZE);
-    for (char c; ;) {
+    for (char c = 0; ;) {
         print_buffer(&input, env);
+        if (c == 9)
+            globing_all_file(env, &input);
         c = get_char_wait_for_keypress(&input, &send);
         if (c == EOF || c == 4 || c == 3)
             return end_command(&input);

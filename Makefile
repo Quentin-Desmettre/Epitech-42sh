@@ -25,6 +25,7 @@ SRC = \
 	src/print_input.c                                  \
 	src/get_input/shell_input.c                        \
 	src/get_input/termios.c                            \
+	src/get_input/tab_globing.c                        \
 	src/main.c                                         \
 	src/parse_input/heredoc.c                          \
 	src/parse_input/split_semicolon.c                  \
