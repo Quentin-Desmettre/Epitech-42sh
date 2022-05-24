@@ -6,6 +6,7 @@
 */
 
 #include "../include/minishell.h"
+#include <sys/stat.h>
 
 char **str_to_word_array_my(char *buff)
 {
@@ -57,26 +58,33 @@ void push_node(histo_t *tete, histo_t *boulle)
     tete->next = boulle;
 }
 
+int size_file(char *file)
+{
+    struct stat stats;
+    if (stat(file, &stats) == 0)
+        return stats.st_size;
+    else
+        exit(84);
+}
+
 void give(char *file, histo_t *head)
 {
-    int i = 0;
     int size = 0;
-    char *nm = NULL;
     int lu = 0;
-    char buff[30000];
+    char buff[size_file(file)];
     char **map = NULL;
     int fd = open(file, O_RDONLY);
 
     if (fd < 0)
         return;
-    lu = read(fd, buff, 29999);
+    lu = read(fd, buff, size_file(file));
+    if (lu < 0)
+        return;
     buff[lu] = '\0';
     map = str_to_word_array_my(buff);
-    for (int i = 0; map[i] != NULL; i++)
-        size++;
-    for (int i = 0; map[i] != NULL; i++)
+    for (int i = 0; map[i] != NULL; i++) {
         push_node(head, init_node(cp(map[i], 0)));
-    for (int i = 0; map[i] != NULL; i++)
         free(map[i]);
+    }
     free(map);
 }
