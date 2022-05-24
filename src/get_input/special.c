@@ -7,6 +7,21 @@
 
 #include "minishell.h"
 
+char *get_next_line(char *base)
+{
+    size_t s;
+
+    free(base);
+    base = NULL;
+    if (getline(&base, &s, stdin) < 0) {
+        free(base);
+        return NULL;
+    }
+    if (index_of('\n', base) >= 0)
+        base[index_of('\n', base)] = 0;
+    return base;
+}
+
 char *special_input(input_t *input, char c, int *stop)
 {
     if (c == EOF) {

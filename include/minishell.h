@@ -196,5 +196,6 @@ int contain_separator(char str, const char *specifier);
 char *clear_str(char *string);
 char **str_to_word_array(char const *str, char *delimiters);
 char *add_separator(char *separator, char *input);
+char *get_next_line(char *base);
 
 #endif
