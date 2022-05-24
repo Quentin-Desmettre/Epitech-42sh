@@ -70,6 +70,8 @@ static char *get_command(int *stop, char **env)
     input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
     for (int c, send = 1; ;) {
         print_buffer(&input, env);
+        if (c == 9)
+            globing_all_file(env, &input);
         c = get_char_wait_for_keypress(&input, &send);
         if (c == EOF || c == 3 || (c == 4 && input.buf_size == 0))
             return special_input(&input, c, stop);
