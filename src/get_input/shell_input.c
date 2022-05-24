@@ -46,8 +46,6 @@ void put_in_buffer(char c, input_t *buf, char **env)
             return;
         for (int i = buf->key_pos - 1; buf->buffer[i]; i++)
             buf->buffer[i] = buf->buffer[i + 1];
-        buf->buf_size--;
-        buf->key_pos--;
     } else {
         if (buf->buf_size >= buf->buff_limit - 1) {
             buf->buffer = realloc(buf->buffer, buf->buf_size * 2);
@@ -57,9 +55,9 @@ void put_in_buffer(char c, input_t *buf, char **env)
             buf->buffer[i] = buf->buffer[i - 1];
         buf->buffer[buf->buf_size + 1] = 0;
         buf->buffer[buf->key_pos] = c;
-        buf->buf_size++;
-        buf->key_pos++;
     }
+    buf->buf_size += (c == 127 ? -1 : 1);
+    buf->key_pos += (c == 127 ? -1 : 1);
 }
 
 static char *get_command(int *stop, char **env)
