@@ -68,7 +68,7 @@ static char *get_command(int *stop, char **env)
     raw.c_cc[VMIN] = 1;
     tcsetattr(0, TCSANOW, &raw);
     input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
-    for (int c, send = 1; ;) {
+    for (int c = 0, send = 1; ;) {
         print_buffer(&input, env);
         if (c == 9)
             globing_all_file(env, &input);
