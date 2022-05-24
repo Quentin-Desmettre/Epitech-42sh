@@ -72,11 +72,11 @@ static char *get_command(int *stop, char **env)
     for (char c; ;) {
         print_buffer(&input, env);
         c = get_char_wait_for_keypress(&input, &send);
-        if (c == EOF || c == 4 || c == 3)
-            return end_command(&input);
+        if (c == EOF || c == 3 || (c == 4 && input.buf_size == 0))
+            return special_input(&input, c, stop);
         if (c == '\r' || c == '\n')
             break;
-        if (send)
+        if (send && c != 4)
            put_in_buffer(c, &input);
     }
     isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
