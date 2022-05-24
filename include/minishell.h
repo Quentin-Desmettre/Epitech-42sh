@@ -228,7 +228,7 @@ void free_history_list(histo_t *head, histo_t *temp);
 void give(char *file, histo_t *head);
 void push_node(histo_t *tete, histo_t *boulle);
 histo_t *init_node(char *cmd);
-char *cp(char *array);
+char *str_copy_string(char *array);
 char **str_to_word_array_my(char *buff);
 int lenght_line(char *buffer, int i);
 int count_nbr(char *buff);

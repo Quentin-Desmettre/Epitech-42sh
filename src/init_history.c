@@ -29,7 +29,7 @@ char **str_to_word_array_my(char *buff)
     return map;
 }
 
-char *cp(char *array)
+char *str_copy_string(char *array)
 {
     int j = 0;
     int size = lenght_line(array, 0);
@@ -45,6 +45,9 @@ char *cp(char *array)
 histo_t *init_node(char *cmd)
 {
     histo_t *ele = malloc(sizeof(histo_t));
+
+    if (ele == NULL)
+        exit(84);
     ele->command = cmd;
     ele->select = 0;
     ele->next = NULL;
@@ -70,19 +73,20 @@ int size_file(char *file)
 void give(char *file, histo_t *head)
 {
     int lu;
-    char buff[size_file(file)];
+    char *buff= NULL;
     char **map = NULL;
     int fd = open(file, O_RDONLY);
 
     if (fd < 0)
         return;
+    buff = malloc(sizeof(char) * size_file(file) + 1);
     lu = read(fd, buff, size_file(file));
     if (lu < 0)
         return;
     buff[lu] = '\0';
     map = str_to_word_array_my(buff);
     for (int i = 0; map[i] != NULL; i++) {
-        push_node(head, init_node(cp(map[i])));
+        push_node(head, init_node(str_copy_string(map[i])));
         free(map[i]);
     }
     free(map);
