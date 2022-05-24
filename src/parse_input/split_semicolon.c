@@ -7,81 +7,101 @@
 
 #include "minishell.h"
 
+int check_redir_out(command_t *tmp, char **err_mess, char **words, int *i)
+{
+    int is_db = !my_strcmp(words[*i], ">>");
+    int is_sg = !my_strcmp(words[*i], ">");
+
+    if (is_db || is_sg) {
+        if (HAS_REDIR_OUT(tmp)) {
+            *err_mess = AMBIG_OUT;
+            return ERROR;
+        }
+        tmp->redir_type += is_db ? REDIR_OUT_APP : REDIR_OUT;
+        tmp->output_file = words[*i + 1];
+        if (!words[*i + 1]) {
+            *err_mess = NULL_CMD;
+            return ERROR;
+        }
+        (*i)++;
+        return CONNECTION_DONE;
+    }
+    return NOTHING_DONE;
+}
+
+int check_redir_in(command_t *tmp, char **err_mess, char **words, int *i)
+{
+    int is_db = !my_strcmp(words[*i], "<<");
+    int is_sg = !my_strcmp(words[*i], "<");
+
+    if (is_db || is_sg) {
+        if (HAS_REDIR_IN(tmp)) {
+            *err_mess = AMBIG_IN;
+            return ERROR;
+        }
+        tmp->redir_type += is_db ? REDIR_IN2 : REDIR_IN;
+        tmp->input_file = words[*i + 1];
+        if (!words[*i + 1]) {
+            *err_mess = NULL_CMD;
+            return ERROR;
+        }
+        (*i)++;
+        return CONNECTION_DONE;
+    }
+    return NOTHING_DONE;
+}
+
+int check_pipe(command_t **tmp, char **all[2], int *i, list_t **commands)
+{
+    char **err_mess = all[0];
+    char **words = all[1];
+
+    if (!my_strcmp(words[*i], "|")) {
+        if (HAS_REDIR_OUT((*tmp))) {
+            *err_mess = AMBIG_OUT;
+            return ERROR;
+        }
+        (*tmp)->redir_type += REDIR_OUT;
+        (*tmp)->output_file = ERROR;
+        if (!words[*i + 1] || !(*tmp)->args[0] ||
+        !my_strcmp(words[*i + 1], "|"))
+            return (*err_mess = NULL_CMD) ? ERROR : ERROR;
+        append_node(commands, (*tmp));
+        *tmp = create_command();
+        (*tmp)->redir_type += REDIR_IN;
+        return CONNECTION_DONE;
+    }
+    return NOTHING_DONE;
+}
+
+int check_everything(command_t **tmp, char **all[2], int *i, list_t **commands)
+{
+    int status;
+
+    if (!(status = check_pipe(tmp, all, i, commands)) ||
+    (status == NOTHING_DONE &&
+    !(status = check_redir_out(*tmp, all[0], all[1], i))) ||
+    (status == NOTHING_DONE &&
+    !(status = check_redir_in(*tmp, all[0], all[1], i))))
+        return ERROR;
+    if (status == NOTHING_DONE && contain_only(all[1][*i], "&| \t")) {
+        *all[0] = NULL_CMD;
+        return ERROR;
+    }
+    if (status == NOTHING_DONE)
+        append_str_array(&(*tmp)->args, strdup(all[1][*i]));
+    return NOTHING_DONE;
+}
+
 static list_t *get_command_lists(char **words, char **err_mess)
 {
     list_t *commands = NULL;
     command_t *tmp = create_command();
 
     for (int i = 0; words[i]; i++) {
-        if (!my_strcmp(words[i], ">>")) {
-            if (HAS_REDIR_OUT(tmp)) {
-                *err_mess = AMBIG_OUT;
-                return NULL;
-            }
-            tmp->redir_type += REDIR_OUT_APP;
-            tmp->output_file = words[i + 1];
-            if (!words[i + 1]) {
-                *err_mess = NULL_CMD;
-                return NULL;
-            }
-            i++;
-        } else if (!my_strcmp(words[i], "<<")) {
-            if (HAS_REDIR_IN(tmp)) {
-                *err_mess = AMBIG_IN;
-                return NULL;
-            }
-            tmp->redir_type += REDIR_IN2;
-            tmp->input_file = words[i + 1];
-            if (!words[i + 1]) {
-                *err_mess = NULL_CMD;
-                return NULL;
-            }
-            i++;
-        } else if (!my_strcmp(words[i], ">")) {
-            if (HAS_REDIR_OUT(tmp)) {
-                *err_mess = AMBIG_OUT;
-                return NULL;
-            }
-            tmp->redir_type += REDIR_OUT;
-            tmp->output_file = words[i + 1];
-            if (!words[i + 1]) {
-                *err_mess = NULL_CMD;
-                return NULL;
-            }
-                i++;
-        } else if (!my_strcmp(words[i], "<")) {
-            if (HAS_REDIR_IN(tmp)) {
-                *err_mess = AMBIG_IN;
-                return NULL;
-            }
-            tmp->redir_type += REDIR_IN;
-            tmp->input_file = words[i + 1];
-            if (!words[i + 1]) {
-                *err_mess = NULL_CMD;
-                return NULL;
-            }
-            i++;
-        } else if (!my_strcmp(words[i], "|")) {
-            if (HAS_REDIR_OUT(tmp)) {
-                *err_mess = AMBIG_OUT;
-                return NULL;
-            }
-            tmp->redir_type += REDIR_OUT;
-            tmp->output_file = NULL;
-            if (!words[i + 1] || !tmp->args[0] ||
-            !my_strcmp(words[i + 1], "|")) {
-                *err_mess = NULL_CMD;
-                return NULL;
-            }
-            append_node(&commands, tmp);
-            tmp = create_command();
-            tmp->redir_type += REDIR_IN;
-        } else if (contain_only(words[i], "&| \t\n")) {
-            *err_mess = NULL_CMD;
+        if (!check_everything(&tmp,
+        (char **[2]){err_mess, words}, &i, &commands))
             return NULL;
-        } else {
-            append_str_array(&tmp->args, strdup(words[i]));
-        }
     }
     if (tmp->args[0])
         append_node(&commands, tmp);
@@ -101,7 +121,10 @@ static command_link_t *create_command_link(int type, char **words)
     c->commands = get_command_lists(words, &err_mess);
     if (!c->commands || err_mess) {
         dprint(2, "%s\n", err_mess ? err_mess : "Invalid null command.");
+        set_last_exit(1);
         free(c);
+        if (!isatty(0))
+            exit(0);
         return NULL;
     }
     return c;
@@ -111,7 +134,7 @@ static int is_prev_valid(char **words, int current)
 {
     if (!current)
         return 0;
-    if (contain_only(words[current - 1], "|&; \t\n"))
+    if (contain_only(words[current - 1], "|&; \t"))
         return 0;
     return 1;
 }
@@ -120,7 +143,7 @@ static int is_next_valid(char **words, int current)
 {
     if (!words[current + 1])
         return 0;
-    if (contain_only(words[current + 1], "|&; \t\n"))
+    if (contain_only(words[current + 1], "|&; \t"))
         return 0;
     return 1;
 }
@@ -145,9 +168,9 @@ int check_and(char **words, int i, char ***tmp, list_t **commands)
         if (!create_link(*tmp, AND_TYPE, commands))
             return 0;
         *tmp = calloc(1, sizeof(char *));
-        return 2;
+        return CONNECTION_DONE;
     }
-    return 1;
+    return NOTHING_DONE;
 }
 
 int check_or(char **words, int i, char ***tmp, list_t **commands)
@@ -160,9 +183,9 @@ int check_or(char **words, int i, char ***tmp, list_t **commands)
         if (!create_link(*tmp, OR_TYPE, commands))
             return 0;
         tmp = calloc(1, sizeof(char *));
-        return 2;
+        return CONNECTION_DONE;
     }
-    return 1;
+    return NOTHING_DONE;
 }
 
 static list_t *split_separators(char **words)
@@ -174,11 +197,15 @@ static list_t *split_separators(char **words)
     for (int i = 0; words[i]; i++) {
         if (!(status = check_and(words, i, &tmp, &commands)))
             return NULL;
-        if (status == 1 &&
+        if (status == NOTHING_DONE &&
         !(status = check_or(words, i, &tmp, &commands)))
             return NULL;
-        if (status == 1)
+        if (status == NOTHING_DONE)
             append_str_array(&tmp, strdup(words[i]));
+        if (status == CONNECTION_DONE) {
+            free_str_array(tmp, 0);
+            tmp = calloc(1, sizeof(char *));
+        }
     }
     if (tmp[0] && !create_link(tmp, NO_TYPE, &commands))
         return NULL;
@@ -191,13 +218,12 @@ static list_t *split_semicolonss(char **words)
     char **tmp = calloc(1, sizeof(char *));
 
     for (int i = 0; words[i]; i++) {
-        if (contain_only(words[i], "; \t\n")) {
-            if (tmp[0]) {
-                append_node(&commands, tmp);
-                tmp = calloc(1, sizeof(char *));
-            }
-            continue;
+        if (contain_only(words[i], "; \t") && tmp[0]) {
+            append_node(&commands, tmp);
+            tmp = calloc(1, sizeof(char *));
         }
+        if (contain_only(words[i], "; \t"))
+            continue;
         append_str_array(&tmp, strdup(words[i]));
     }
     if (tmp[0])
@@ -242,7 +268,7 @@ static list_t *split_separatorss(list_t *semicolons)
 char **split_words(char *input)
 {
     char **word_parse = NULL;
-    char *str_separator = ";&|";
+    char *str_separator = ";&|<>";
 
     input = clear_str(input);
     input = add_separator(str_separator, input);
@@ -263,4 +289,8 @@ void new_parse_input(char *input, env_t *vars)
         exec_command_list(second_split->data, vars);
         second_split = second_split->next;
     } while (second_split != begin);
+    if (is_exit()) {
+        write(2, "exit\n", 5);
+        exit(0);
+    }
 }

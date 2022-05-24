@@ -64,6 +64,9 @@ int is_exit_glob(int change, int new_val);
     #define OR_TYPE 1
     #define NO_TYPE 2
 
+    #define NOTHING_DONE 1
+    #define CONNECTION_DONE 2
+
 typedef struct {
     int link_type;
     list_t *commands;
