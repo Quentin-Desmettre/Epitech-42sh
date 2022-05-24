@@ -64,6 +64,9 @@ int is_exit_glob(int change, int new_val);
     #define OR_TYPE 1
     #define NO_TYPE 2
 
+    #define NOTHING_DONE 1
+    #define CONNECTION_DONE 2
+
 typedef struct {
     int link_type;
     list_t *commands;
@@ -94,6 +97,7 @@ typedef struct {
 } input_t;
 
 typedef struct {
+    histo_t *history;
     char *name;
     char *value;
 } replace_t;
@@ -173,7 +177,7 @@ int get_final_fd(void);
 void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
-
+char *special_input(input_t *input, char c, int *stop);
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);
 void rm_alias(void *alias);

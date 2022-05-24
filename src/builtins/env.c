@@ -7,13 +7,29 @@
 
 #include "minishell.h"
 
+int exec_builtin_sec(char **args, env_t *vars, int fds[2], int tmp[2])
+{
+    int is_pipe = tmp[0];
+    int index = tmp[1];
+
+    if (index == 6)
+        unalias(args, vars, fds[1], is_pipe);
+    if (index == 7)
+        setvar_pipe(args, &vars->vars, fds[1], is_pipe);
+    if (index == 8)
+        unsetvar_pipe(args, &vars->vars, fds[1], is_pipe);
+    return 0;
+}
+
 int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
 {
-    void (*builtin[5])(char **, char ***, int, int) = {
-        &cd_pipe, &setenv_pipe, &unsetenv_pipe, NULL, NULL
+    void (*builtin[9])(char **, char ***, int, int) = {
+        &cd_pipe, &setenv_pipe, &unsetenv_pipe, NULL, NULL, NULL, NULL, NULL
+        , NULL
     };
-    char *builtins[5] = {
-        "cd", "setenv", "unsetenv", "env", "exit"
+    char *builtins[9] = {
+        "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set",
+        "unset"
     };
     int index = index_str_in_array(builtins, args[0]);
 
@@ -23,16 +39,19 @@ int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
         env_pipe(args, &vars->env, fds[1]);
     if (index == 4)
         exit_pipe(args, is_pipe);
-    return 0;
+    if (index == 5)
+        alias(args, vars, fds[1], is_pipe);
+    return exec_builtin_sec(args, vars, fds, (int [2]){is_pipe, index});
 }
 
 int is_builtin(char const *word)
 {
-    char *builtins[5] = {
-    "cd", "setenv", "unsetenv", "env", "exit"
+    char *builtins[9] = {
+    "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set"
+    , "unset"
     };
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 9; i++)
         if (my_strcmp(word, builtins[i]) == 0)
             return 1;
     return 0;

@@ -27,14 +27,11 @@ char get_char_wait_for_keypress(input_t *buffer, int *send)
         c = getchar();
         if (c == 91) {
             c = getchar();
-            if (c == 68 && buffer->key_pos > 0)
-                buffer->key_pos--;
-            if (c == 67 && buffer->key_pos < buffer->buf_size)
-                buffer->key_pos++;
-            if (c == 51) {
-                c = getchar();
-                c == 126 ? suppr_char(buffer) : 0;
-            }
+            c == 68 && buffer->key_pos > 0 ? buffer->key_pos-- : 0;
+            c == 67 && buffer->key_pos < buffer->buf_size ?
+            buffer->key_pos++ : 0;
+            c == 51 ? c = getchar() : 0;
+            c == 126 ? suppr_char(buffer) : 0;
         }
     }
     return c;
@@ -50,7 +47,7 @@ void put_in_buffer(char c, input_t *buf)
         buf->buf_size--;
         buf->key_pos--;
     } else {
-        if (buf->buf_size >= buf->buff_limit) {
+        if (buf->buf_size >= buf->buff_limit - 1) {
             buf->buffer = realloc(buf->buffer, buf->buf_size * 2);
             buf->buff_limit = buf->buf_size * 2;
         }
@@ -75,35 +72,33 @@ static char *get_command(int *stop, char **env)
     for (char c; ;) {
         print_buffer(&input, env);
         c = get_char_wait_for_keypress(&input, &send);
-        if (c == EOF || c == 4 || c == 3)
-            return end_command(&input);
+        if (c == EOF || c == 3 || (c == 4 && input.buf_size == 0))
+            return special_input(&input, c, stop);
         if (c == '\r' || c == '\n')
             break;
-        if (send)
+        if (send && c != 4)
            put_in_buffer(c, &input);
     }
-    tcsetattr(0, TCSANOW, original_termios(NULL));
-    write(1, "\n\r", 2);
+    isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
+    isatty(0) ? write(1, "\n\r", 2) : 0;
     return input.buffer;
 }
 
-char *get_shell_input(char **env, int *stop)
+char *get_shell_input(env_t *vars, int *stop)
 {
     char *str = my_strdup("");
 
+    write(1, "\33[s", 3);
     while (str[0] == 0) {
         free(str);
-        if (is_reset_buf()) {
-            set_reset_buffer(0);
-            open_stdin();
-        }
         if (isatty(0))
-            print_input(env);
-        str = get_command(stop, env);
+            print_input(vars->env);
+        str = get_command(stop, vars->env);
         if (!str) {
-            free_str_array(env, 1);
+            my_free("PPppp", vars->vars, vars->env, vars->aliases,
+            vars->history, vars);
             print("%s", isatty(get_stdin()) ? "exit\n" : "");
-            exit(get_last_exit());
+            exit(0);
         }
     }
     return str;

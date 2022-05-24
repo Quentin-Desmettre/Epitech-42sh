@@ -75,22 +75,22 @@ void *params[6], char const *command)
     int *fds = params[0];
     int *pids = params[1];
     char ***env = params[3];
-    list_t **all_commands = params[4];
     list_t **commands = params[5];
     char **args = dup_word_array(cur->args);
 
-    destroy_list(all_commands, free);
-    destroy_list(commands, free_command);
     signal(SIGINT, SIG_DFL);
     if (!redirect_pipe(fds)) {
         free(pids);
         exit(1);
     }
+    if ((*commands)->next == (*commands) &&
+    get_final_fd() >= 0 && !HAS_REDIR_OUT(cur)) {
+        dup2(get_final_fd(), 1);
+        close(get_final_fd());
+    }
     free(pids);
     if (command)
         exec_args(command, args, *env);
-    free_str_array(args, 1);
-    free_str_array(*env, 1);
     exit(1);
 }
 
