@@ -265,20 +265,66 @@ static list_t *split_separatorss(list_t *semicolons)
     return all_command_links;
 }
 
-char **split_words(char *input)
+void find_field_aliases(char **str, list_t *info)
+{
+    list_t *save = info;
+    replace_t *to_cmp = NULL;
+
+    if (!*str || !save)
+        return;
+    do {
+        to_cmp = save->data;
+        if (my_strcmp(*str, to_cmp->name) == 0) {
+            *str = to_cmp->value;
+            break;
+        }
+        save = save->next;
+    } while (save != info);
+}
+
+void replace_aliases_in_word_parse(char **word_parse, list_t *vars)
+{
+    if (!vars)
+        return;
+    find_field_aliases(&word_parse[0], vars);
+    for (int i = 1; word_parse[i]; i++) {
+        if (contain(word_parse[i], ';')) {
+            find_field_aliases(&word_parse[i + 1], vars);
+        }
+    }
+}
+
+void delete_all_back_slash(char **str)
+{
+    int index = 0;
+    char *tmp = NULL;
+
+    for (int i = 0; str[i]; i++) {
+        while (contain(str[i], '\\')) {
+            index = index_of('\\', str[i]);
+            tmp = replace(str[i], index, 1, "");
+            free(str[i]);
+            str[i] = tmp;
+        }
+    }
+}
+
+char **split_words(char *input, env_t *vars)
 {
     char **word_parse = NULL;
-    char *str_separator = ";&|<>";
+    char *str_separator = ";&|><";
 
     input = clear_str(input);
     input = add_separator(str_separator, input);
     word_parse = str_to_word_array(input, " ");
+    delete_all_back_slash(word_parse);
+    replace_aliases_in_word_parse(word_parse, vars->aliases->commands);
     return (word_parse);
 }
 
 void new_parse_input(char *input, env_t *vars)
 {
-    char **words = split_words(input);
+    char **words = split_words(input, vars);
     list_t *first_split = split_semicolonss(words);
     list_t *second_split = split_separatorss(first_split);
     list_t *begin = second_split;
