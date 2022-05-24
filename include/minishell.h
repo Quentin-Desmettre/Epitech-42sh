@@ -208,4 +208,26 @@ void put_in_buffer(char c, input_t *buf);
 void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd);
 void set_print_tab(char **command, char **env, input_t *input);
 
+// History
+
+/// \brief search in history the good func and return it
+char *is_up(histo_t *head);
+
+/// \brief search in history the good func and return it
+char *is_down(histo_t *head);
+
+/// \brief append note in lenked list with the new command
+void history_append(char *command, histo_t *head);
+histo_t *init_history();
+
+/// \brief free linked list for the history
+void free_history_list(histo_t *head, histo_t *temp);
+void give(char *file, histo_t *head);
+void push_node(histo_t *tete, histo_t *boulle);
+histo_t *init_node(char *cmd);
+char *cp(char *array, int i);
+char **str_to_word_array_my(char *buff);
+int lenght_line(char *buffer, int i);
+int count_nbr(char *buff);
+int count_line(char *buff);
 #endif

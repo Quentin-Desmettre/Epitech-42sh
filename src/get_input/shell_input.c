@@ -21,7 +21,6 @@ void suppr_char(input_t *buf)
 char get_char_wait_for_keypress(input_t *buffer, int *send)
 {
     char c = getchar();
-
     *send = c != 9 && c != 27;
     if (c == 27) {
         c = getchar();
