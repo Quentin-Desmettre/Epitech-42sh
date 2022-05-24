@@ -12,6 +12,7 @@ static char **init_local(char **env)
     char **vars = malloc(sizeof(char *) * 1);
     char **args = malloc(sizeof(char *) * 3);
 
+    vars[0] = NULL;
     args[0] = malloc(5);
     args[1] = strdup(get_field(env, "PATH") + 1);
     args[2] = NULL;

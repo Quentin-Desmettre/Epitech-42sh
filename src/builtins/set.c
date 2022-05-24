@@ -21,6 +21,8 @@ int var_is_key(char const *test, char const *field)
 
 int var_index_of_key(char **env, char const *key)
 {
+    if (env == NULL)
+        return -1;
     for (int i = 0; env[i]; i++)
         if (var_is_key(key, env[i]))
             return i;
