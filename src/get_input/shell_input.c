@@ -78,7 +78,7 @@ static char *get_command(int *stop, char **env)
         if (send && c != 4)
            put_in_buffer(c, &input);
     }
-    isatty(0) ? write(1, "\n\r", 2) : 0;
+    isatty(0) ? write(1, "\n\r", 2) : ((*stop) = 1);
     isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
     !input.buf_size ? write(1, "\33[s\33[u", 6) : 0;
     return input.buffer;
