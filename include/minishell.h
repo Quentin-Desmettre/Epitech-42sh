@@ -196,5 +196,7 @@ char *add_separator(char *separator, char *input);
 int globing_all_file(char **env, input_t *input);
 void clear_term(input_t *buf, struct winsize w, char **env);
 void put_in_buffer(char c, input_t *buf);
+void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd);
+void set_print_tab(char **command, char **env, input_t *input);
 
 #endif
