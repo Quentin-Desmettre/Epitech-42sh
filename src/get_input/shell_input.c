@@ -62,14 +62,13 @@ void put_in_buffer(char c, input_t *buf)
 
 static char *get_command(int *stop, char **env)
 {
-    int send = 1;
     static struct termios raw;
     input_t input = {0, BUFFER_SIZE, 0, 0, 0};
 
     raw.c_cc[VMIN] = 1;
     tcsetattr(0, TCSANOW, &raw);
-    input.buffer = malloc(sizeof(char) * BUFFER_SIZE);
-    for (char c; ;) {
+    input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
+    for (int c, send = 1; ;) {
         print_buffer(&input, env);
         c = get_char_wait_for_keypress(&input, &send);
         if (c == EOF || c == 3 || (c == 4 && input.buf_size == 0))
@@ -79,8 +78,9 @@ static char *get_command(int *stop, char **env)
         if (send && c != 4)
            put_in_buffer(c, &input);
     }
-    isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
     isatty(0) ? write(1, "\n\r", 2) : 0;
+    isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
+    !input.buf_size ? write(1, "\33[s\33[u", 6) : 0;
     return input.buffer;
 }
 
