@@ -37,8 +37,10 @@ char get_char_wait_for_keypress(input_t *buffer, int *send)
     return c;
 }
 
-void put_in_buffer(char c, input_t *buf)
+void put_in_buffer(char c, input_t *buf, char **env)
 {
+    if (c < 32)
+        return special_char(buf, c, env);
     if (c == 127) {
         if (!buf->buf_size || buf->key_pos == 0)
             return;
@@ -68,15 +70,15 @@ static char *get_command(int *stop, char **env)
     raw.c_cc[VMIN] = 1;
     tcsetattr(0, TCSANOW, &raw);
     input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
-    for (int c, send = 1; ;) {
+    for (int c = 0, send = 1; ;) {
         print_buffer(&input, env);
         c = get_char_wait_for_keypress(&input, &send);
         if (c == EOF || c == 3 || (c == 4 && input.buf_size == 0))
             return special_input(&input, c, stop);
         if (c == '\r' || c == '\n')
             break;
-        if (send && c != 4)
-           put_in_buffer(c, &input);
+        if (send)
+            put_in_buffer(c, &input, env);
     }
     isatty(0) ? write(1, "\n\r", 2) : ((*stop) = 1);
     isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
