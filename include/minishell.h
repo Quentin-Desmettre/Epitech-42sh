@@ -202,7 +202,7 @@ char **str_to_word_array(char const *str, char *delimiters);
 char *add_separator(char *separator, char *input);
 char *get_next_line(char *base);
 
-int globing_all_file(char **env, input_t *input);
+void globing_all_file(char **env, input_t *input);
 void clear_term(input_t *buf, struct winsize w, char **env);
 void put_in_buffer(char c, input_t *buf);
 void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd);
@@ -225,9 +225,11 @@ void free_history_list(histo_t *head, histo_t *temp);
 void give(char *file, histo_t *head);
 void push_node(histo_t *tete, histo_t *boulle);
 histo_t *init_node(char *cmd);
-char *cp(char *array, int i);
+char *cp(char *array);
 char **str_to_word_array_my(char *buff);
 int lenght_line(char *buffer, int i);
 int count_nbr(char *buff);
 int count_line(char *buff);
+
+int search_pattern(char *pattern, char *str);
 #endif

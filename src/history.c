@@ -27,7 +27,7 @@ void history_append(char *command, histo_t *head)
 
     if (fd < 0)
         return;
-    push_node(head, init_node(cp(command, 0)));
+    push_node(head, init_node(cp(command)));
     write(fd, command, count_line(command));
     write(fd, "\n", 1);
     close(fd);
@@ -62,7 +62,7 @@ char *is_up(histo_t *head)
 
 histo_t *init_history()
 {
-    histo_t *head = init_node(cp("fd\n", 0));
+    histo_t *head = init_node(cp("fd\n"));
     histo_t *temp;
 
     give("history.txt", head);

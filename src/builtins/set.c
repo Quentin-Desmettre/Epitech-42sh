@@ -35,7 +35,7 @@ void var_setter(char ***var, int index, char **args)
         set_var(var, index, args[0], args[1]);
 }
 
-int set(char **args, char ***var, int o_fd, int is_pipe)
+int set(char **args, char ***var, __attribute__((unused))int o_fd, int is_pipe)
 {
     if ((args[0][0] < 'A' || (args[0][0] > 'Z' && args[0][0] < 'a') ||
     (args[0][0] > 'z')) && args[0][0] != '_') {

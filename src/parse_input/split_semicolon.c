@@ -296,7 +296,7 @@ void replace_aliases_in_word_parse(char **word_parse, list_t *vars)
 
 void delete_all_back_slash(char **str)
 {
-    int index = 0;
+    int index;
     char *tmp = NULL;
 
     for (int i = 0; str[i]; i++) {
@@ -352,7 +352,6 @@ void loop_to_replace(char **str, int *next_index, char **env, char spec)
 
 void set_loop_to_replace(char **str, char **env, char spec)
 {
-    char *tmp = NULL;
     int nbr_of_var = 0;
     int next_index = 0;
 

@@ -38,10 +38,10 @@ int lenght_line(char *buffer, int i)
     int bn = 0;
     int count = 0;
 
-    for (j; i != bn; j++)
+    for (; i != bn; j++)
         if (buffer[j] == '\n')
             bn++;
-    for (j; buffer[j] != '\0'; j++)
+    for (; buffer[j] != '\0'; j++)
         count++;
     return count + 2;
 }

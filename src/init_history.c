@@ -29,14 +29,14 @@ char **str_to_word_array_my(char *buff)
     return map;
 }
 
-char *cp(char *array, int i)
+char *cp(char *array)
 {
     int j = 0;
     int size = lenght_line(array, 0);
     char *new_map = malloc(sizeof(char) * size);
     if (new_map == NULL)
         exit(84);
-    for (j; array[j] != '\0'; j++)
+    for (; array[j] != '\0'; j++)
         new_map[j] = array[j];
     new_map[j] = '\0';
     return new_map;
@@ -69,8 +69,7 @@ int size_file(char *file)
 
 void give(char *file, histo_t *head)
 {
-    int size = 0;
-    int lu = 0;
+    int lu;
     char buff[size_file(file)];
     char **map = NULL;
     int fd = open(file, O_RDONLY);
@@ -83,7 +82,7 @@ void give(char *file, histo_t *head)
     buff[lu] = '\0';
     map = str_to_word_array_my(buff);
     for (int i = 0; map[i] != NULL; i++) {
-        push_node(head, init_node(cp(map[i], 0)));
+        push_node(head, init_node(cp(map[i])));
         free(map[i]);
     }
     free(map);
