@@ -18,7 +18,7 @@ static char **init_local(char **env)
     strcpy(args[0], "path");
     set(args, &vars, 1, 0);
     free(args[1]);
-    strcpy(args[0], "pwd");
+    strcpy(args[0], "cwd");
     args[1] = strdup(get_field(env, "PWD") + 1);
     set(args, &vars, 1, 0);
     free(args[1]);
