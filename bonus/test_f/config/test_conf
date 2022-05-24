@@ -1,7 +1,34 @@
 &Mandatory minishell1:
-    "testcd"={cd ..}
-    "test echo"={echo bonjour}
-    "test ls"={ls}
+    "cd"={cd ..}
+    "nullcommand"={}
+    "invalidcommand"={xsdfghjkhg}
+    "setenv"={setenv tata}
+    "setenvbasarg"={setenv tata tfc jdck kdd}
+    "setenvnotarg"={setenv}
+    "env"={env}
+    "unsetenv"={unsetenv addfk}
+    "cd-"={cd ..; cd -}
+    "cddirect-"={cd _f}
+    "echo"={echo bonjour}
+    "ls"={ls}
+    "cd error1"={cd}
+    "cd error2"={cd sdfghjhgfd}
+    "cd error2"={cd algo.py}
+    "cd error3"={mkdir test; chmod test 000; cd test; ls}
+    "/bin/ls"={/bin/ls}
+    "sapcd and tab1"={                       /     bin    /ls}
+    "sapcd and tab2"={                         ls                                    }
+    "sapcd and tab3"={                                                                                  ls                                    }
 &Mandatory minishell2:
-    "test2;"={cd ..; cd -; echo aa}
+    "; 1;"={cd ..; cd -; echo aa}
+    "; 2;"={cd ..; cd -; ls}
+    "; error 1;"={cd ..; cd -;;;;;;;;;}
+    "; error 2;"={;}
+    "; error 3;"={cd ..;;;;; ; ; ; ; ;  ;;;; ;; ; ; ; ;;echo bonjour}
+    "; error 4;"={;;;; ; ; ; ; ;  ;;;; ;; ; ; ; ;;echo bonjour}
+    "simple pipe;"={ls | wc -l}$
+    "simple pipe error 1"={ls || wc -l}
+    "simple pipe error 2"={|wc -l}
+    "simple pipe error 3"={ls |}
+    "multiple pipe 1"={ls | wc -l | cat -e}
 &cool:

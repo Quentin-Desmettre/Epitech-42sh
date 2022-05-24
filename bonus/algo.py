@@ -19,15 +19,21 @@ class test():
         self.test = ""
         self.answer = ""
         self.name = name
-    def check_answer(self, prog):
+    def check_answer(self, prog, lenght):
         if self.test == self.answer:
-            print(Fore.GREEN + self.name,":  passed")
+            print("\033[32m", self.name, end ='')
+            for j in range(0, lenght - len(self.name) + 1):
+                print(" ", end ='')
+            print(": passed")
             prog.passed += 1
             self.test_passed = 1
         else:
             self.test_passed = 0
             prog.wrong += 1
-            print(Fore.RED + self.name,":  not passed")
+            print("\033[31m", self.name, end ="")
+            for j in range(0, lenght - len(self.name) + 1):
+                print(" ", end ='')
+            print(": not passed")
             file_test_failed = open('./test_f/' + self.name, "w")
             file_test_failed.write("what we want :\n")
             file_test_failed.write(self.test)
@@ -49,6 +55,7 @@ file_config = open("./test_f/config/test_conf", "r")
 all_test = file_config.read()
 all_test = all_test.split('\n')
 b = ""
+maxlenght = 0
 for i in range (len(all_test) - 1):
     if (all_test[i][0] == '&'):
         cat_act = ""
@@ -63,16 +70,18 @@ for i in range (len(all_test) - 1):
         a = a.split('=')
         for j in range (5, len(a[0]) - 1):
             b = b + a[0][j]
+            if (len(b) > maxlenght):
+                maxlenght = len(b)
         for j in range (1, len(a[1]) - 1):
             c = c + a[1][j]
         test_all.tab.append(test(c, b, cat_act))
 
+print(maxlenght)
 for j in range (0, len(test_all.tab)):
-    print(test_all.tab[j].test_cmd)
     test_all.tab[j].answer_cmd = test_all.tab[j].test_cmd
-    test_all.tab[j].test_cmd = test_all.tab[j].test_cmd + '> test'
+    test_all.tab[j].test_cmd = 'echo "' + test_all.tab[j].test_cmd + '" | tcsh > test 2>out'
     os.system(test_all.tab[j].test_cmd)
-    test_all.tab[j].answer_cmd = 'echo "' + test_all.tab[j].answer_cmd + '" | 42sh > answer'
+    test_all.tab[j].answer_cmd = 'echo "' + test_all.tab[j].answer_cmd + '" | ./42sh > answer 2>outa'
     os.system(test_all.tab[j].answer_cmd)
     file_test = open("test", "r")
     file_answer = open("answer", "r")
@@ -80,8 +89,7 @@ for j in range (0, len(test_all.tab)):
     test_all.tab[j].answer = file_answer.read()
     file_answer.close()
     file_test.close()
-    test_all.tab[j].check_answer(test_all)
+    test_all.tab[j].check_answer(test_all, maxlenght)
 
-print(Style.RESET_ALL)
-print(test_all.wrong + test_all.passed, "tests", test_all.passed, "passed")
-# site()
+print("\033[37m")
+print("Tested: \033[32m%d\033[37m, Passed: \033[32m%d\033[37m, Failed: \033[31m%d\033[37m" %(test_all.passed + test_all.wrong, test_all.passed, test_all.wrong))
