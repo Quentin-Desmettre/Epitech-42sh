@@ -49,7 +49,7 @@ static void keep_space_in_str(char **string, int *i, char *separator)
 
 static void return_clean_string(char **tmp, char *string, int i, int *index)
 {
-    char *separator = "\n\t\r";
+    char *separator = "\t\r";
 
     if (string[i] == ' ') {
         if (i > 0 && contain_separator(string[i - 1], separator) < 0) {
@@ -66,7 +66,7 @@ char *clear_str(char *string)
 {
     char *tmp;
     int index = 0;
-    char *separator = "\n\t\r";
+    char *separator = "\t\r";
     size_t size = strlen(string);
     size_t nbr_separator = 0;
 
