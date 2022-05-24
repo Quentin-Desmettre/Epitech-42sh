@@ -46,7 +46,7 @@ int set(char **args, char ***var, int o_fd, int is_pipe)
         "Variable name must contain alphanumeric characters.\n");
         return 1;
     }
-    if (is_pipe)
+    if (!is_pipe)
         var_setter(var, var_index_of_key(*var, args[0]), args);
     return 0;
 }
