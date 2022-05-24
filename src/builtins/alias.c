@@ -58,8 +58,6 @@ void add_alias(char **args, list_t **c, int is_pipe)
     replace_t *cmd = 0;
     replace_t *new = malloc(sizeof(replace_t));
 
-    if (is_pipe)
-        return;
     set_value(args, new);
     if (*c == 0 || strcmp(((replace_t *)tmp->data)->name, args[1]) > 0) {
         append_node(c, new);
