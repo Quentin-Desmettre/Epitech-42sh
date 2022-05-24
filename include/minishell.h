@@ -169,6 +169,7 @@ int get_final_fd(void);
 void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
+char *special_input(input_t *input, char c, int *stop);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);
