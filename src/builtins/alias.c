@@ -30,8 +30,8 @@ void print_one_alias(list_t **c, int fd, char *av)
         return;
     for (int i = 0; i == 0 || tmp != *c; i++) {
         cmd = tmp->data;
-        if (search_pattern(av, cmd->name))
-            dprintf(fd, "%s\t%s\n", cmd->name, cmd->value);
+        if (strcmp(av, cmd->name) == 0)
+            dprintf(fd, "%s\n", cmd->value);
         tmp = tmp->next;
     }
 }
