@@ -61,8 +61,10 @@ void give(char *file, histo_t *head)
     int lu;
     char *buff = NULL;
     char **map = NULL;
-    int fd = open(file, O_RDONLY);
+    long fd = open(file, O_RDONLY);
+    int gpt = fclose((FILE *)fd);
 
+    gpt += 1;
     if (fd < 0)
         return;
     buff = malloc(sizeof(char) * size_file(file) + 1);
@@ -76,4 +78,5 @@ void give(char *file, histo_t *head)
         free(map[i]);
     }
     free(map);
+    close(fd);
 }
