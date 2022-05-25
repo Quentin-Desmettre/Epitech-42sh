@@ -62,8 +62,9 @@ void push_node(histo_t *tete, histo_t *boulle)
 int size_file(char *file)
 {
     struct stat stats;
+
     if (stat(file, &stats) == 0)
-        return stats.st_size;
+        return (stats.st_size);
     else
         exit(84);
 }
