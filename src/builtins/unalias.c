@@ -75,7 +75,8 @@ void one_unalias(list_t **c, char *av)
     }
 }
 
-void unalias(char **args, env_t *e, int o_fd, int is_pipe)
+void unalias(char **args, env_t *e,  __attribute__((unused))int o_fd,
+int is_pipe)
 {
     int size = my_str_array_len(args);
 

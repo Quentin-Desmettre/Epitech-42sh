@@ -62,6 +62,7 @@ env_t *init_vars(char **env)
     vars->env = init_env(env);
     vars->aliases = init_alias();
     vars->vars = init_local(env);
+    vars->history = init_history();
     open_stdin();
     return vars;
 }

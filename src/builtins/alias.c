@@ -52,7 +52,7 @@ void set_value(char **args, replace_t *new)
     new->value = all;
 }
 
-void add_alias(char **args, list_t **c, int is_pipe)
+void add_alias(char **args, list_t **c)
 {
     list_t *tmp = *c;
     replace_t *cmd = 0;
@@ -86,5 +86,5 @@ void alias(char **args, env_t *e, int o_fd, int is_pipe)
     if (size == 2)
         print_one_alias(&e->aliases->commands, o_fd, args[1]);
     if (size >= 3 && is_pipe == 0)
-        add_alias(args, &e->aliases->commands, is_pipe);
+        add_alias(args, &e->aliases->commands);
 }
