@@ -234,4 +234,8 @@ int count_nbr(char *buff);
 int count_line(char *buff);
 
 int search_pattern(char *pattern, char *str);
+void replace_all_variable(char **env, char **str, char spec);
+void find_all_back_slash(char **str);
+void replace_aliases_in_word_parse(char **word_parse, list_t *vars);
+
 #endif

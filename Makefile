@@ -43,7 +43,10 @@ SRC = \
 	src/init_vars.c									   \
 	src/history.c									   \
 	src/history_lenght_func.c						   \
-	src/init_history.c
+	src/init_history.c                                 \
+	src/parse_input/replace_variable.c				   \
+	src/parse_input/delete_backslash.c				   \
+	src/parse_input/aliases_in_parse.c
 
 
 OBJ = $(SRC:.c=.o)
