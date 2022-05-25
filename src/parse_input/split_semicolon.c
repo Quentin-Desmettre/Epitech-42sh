@@ -265,20 +265,132 @@ static list_t *split_separatorss(list_t *semicolons)
     return all_command_links;
 }
 
-char **split_words(char *input)
+void find_field_aliases(char **str, list_t *info)
+{
+    list_t *save = info;
+    replace_t *to_cmp = NULL;
+
+    if (!*str || !save)
+        return;
+    do {
+        to_cmp = save->data;
+        if (my_strcmp(*str, to_cmp->name) == 0) {
+            *str = to_cmp->value;
+            break;
+        }
+        save = save->next;
+    } while (save != info);
+}
+
+void replace_aliases_in_word_parse(char **word_parse, list_t *vars)
+{
+    if (!vars)
+        return;
+    find_field_aliases(&word_parse[0], vars);
+    for (int i = 1; word_parse[i]; i++) {
+        if (contain(word_parse[i], ';')) {
+            find_field_aliases(&word_parse[i + 1], vars);
+        }
+    }
+}
+
+void delete_all_back_slash(char **str)
+{
+    int index;
+    char *tmp = NULL;
+
+    for (int i = 0; str[i]; i++) {
+        while (contain(str[i], '\\')) {
+            index = index_of('\\', str[i]);
+            tmp = replace(str[i], index, 1, "");
+            free(str[i]);
+            str[i] = tmp;
+        }
+    }
+}
+
+char const *noa_better_get_field(char **env, char const *field, char spec)
+{
+    int f_len = my_strlen(field);
+
+    for (int i = 0; env[i]; i++)
+        if (my_strncmp(env[i], field, f_len) == 0 && env[i][f_len] == spec)
+            return env[i] + f_len + 1;
+    return NULL;
+}
+
+void get_variable(char **str, const char *source, int *len_var, int index_var)
+{
+    for (int i = index_var; source[i]; i++, (*len_var)++)
+        if (source[i] == ' ' ||
+        (i > 0 && source[i - 1] == ')') ||
+        source [i] == '$' || source[i] == '\0')
+            break;
+    (*str) = malloc(sizeof(char) * (*len_var + 1));
+    for (int i = 0; i < (*len_var) && source[index_var + i]; i++)
+        (*str)[i] = source[index_var + i];
+    (*str)[*len_var] = '\0';
+}
+
+void loop_to_replace(char **str, int *next_index, char **env, char spec)
+{
+    char *tmp = NULL;
+    char *str_to_cmp = NULL;
+    int len_to_replace = 0;
+
+    for (; (*str)[*next_index]; (*next_index)++)
+        if (*next_index && (*str)[*next_index - 1] == '$')
+            break;
+    get_variable(&str_to_cmp, (*str), &len_to_replace, *next_index);
+    tmp = (char *)noa_better_get_field(env, str_to_cmp, spec);
+    if (tmp) {
+        tmp = replace((*str), *next_index - 1, len_to_replace + 1, tmp);
+        free((*str));
+        (*str) = tmp;
+    }
+}
+
+void set_loop_to_replace(char **str, char **env, char spec)
+{
+    int nbr_of_var = 0;
+    int next_index = 0;
+
+    for (int j = 0; (*str)[j]; j++)
+        nbr_of_var += (*str)[j] == '$' ? 1 : 0;
+    while (nbr_of_var) {
+        loop_to_replace(str, &next_index, env, spec);
+        nbr_of_var--;
+    }
+
+}
+
+void replace_all_variable(char **env, char **str, char spec)
+{
+    for (int i = 0; str[i]; i++) {
+        if (contain(str[i], '$')) {
+            set_loop_to_replace(&str[i], env, spec);
+        }
+    }
+}
+
+char **split_words(char *input, env_t *vars)
 {
     char **word_parse = NULL;
-    char *str_separator = ";&|<>";
+    char *str_separator = ";&|><";
 
     input = clear_str(input);
     input = add_separator(str_separator, input);
     word_parse = str_to_word_array(input, " ");
+    delete_all_back_slash(word_parse);
+    replace_aliases_in_word_parse(word_parse, vars->aliases->commands);
+    replace_all_variable(vars->vars, word_parse, '\t');
+    replace_all_variable(vars->env, word_parse, '=');
     return (word_parse);
 }
 
 void new_parse_input(char *input, env_t *vars)
 {
-    char **words = split_words(input);
+    char **words = split_words(input, vars);
     list_t *first_split = split_semicolonss(words);
     list_t *second_split = split_separatorss(first_split);
     list_t *begin = second_split;

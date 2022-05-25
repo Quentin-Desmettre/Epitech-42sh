@@ -81,6 +81,12 @@ typedef struct {
     char redir_type;
 } command_t;
 
+typedef struct history_s {
+    char *command;
+    int select;
+    struct history_s *next;
+}histo_t;
+
 typedef struct {
     char *buffer;
     int buff_limit;
@@ -90,9 +96,7 @@ typedef struct {
 } input_t;
 
 typedef struct {
-} history_t;
-
-typedef struct {
+    histo_t *history;
     char *name;
     char *value;
 } replace_t;
@@ -102,7 +106,7 @@ typedef struct {
 } aliases_t;
 
 typedef struct {
-    history_t *history;
+    histo_t *history;
     aliases_t *aliases;
     char **vars;
     char **env;
@@ -173,6 +177,8 @@ void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
 char *special_input(input_t *input, char c, int *stop);
+void special_char(input_t *input, char c, char **env);
+void suppr_char(input_t *buf);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
 void unalias(char **args, env_t *e, int o_fd, int is_pipe);
@@ -198,10 +204,34 @@ char **str_to_word_array(char const *str, char *delimiters);
 char *add_separator(char *separator, char *input);
 char *get_next_line(char *base);
 
-int globing_all_file(char **env, input_t *input);
+void globing_all_file(char **env, input_t *input);
 void clear_term(input_t *buf, struct winsize w, char **env);
-void put_in_buffer(char c, input_t *buf);
+void put_in_buffer(char c, input_t *buf, char **env);
 void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd);
 void set_print_tab(char **command, char **env, input_t *input);
 
+// History
+
+/// \brief search in history the good func and return it
+char *is_up(histo_t *head);
+
+/// \brief search in history the good func and return it
+char *is_down(histo_t *head);
+
+/// \brief append note in lenked list with the new command
+void history_append(char *command, histo_t *head);
+histo_t *init_history(void);
+
+/// \brief free linked list for the history
+void free_history_list(histo_t *head, histo_t *temp);
+void give(char *file, histo_t *head);
+void push_node(histo_t *tete, histo_t *boulle);
+histo_t *init_node(char *cmd);
+char *str_copy_string(char *array);
+char **str_to_word_array_my(char *buff);
+int lenght_line(char *buffer, int i);
+int count_nbr(char *buff);
+int count_line(char *buff);
+
+int search_pattern(char *pattern, char *str);
 #endif

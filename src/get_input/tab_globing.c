@@ -14,7 +14,7 @@ void replace_buffer(input_t *input, char **command, char **env)
 
     ioctl(0, TIOCGWINSZ, &w);
     for (size_t i = input->buf_size; i < strlen(command[0]); i++)
-        put_in_buffer(command[0][i], input);
+        put_in_buffer(command[0][i], input, env);
     clear_term(input, w, env);
 }
 
@@ -44,7 +44,7 @@ char **one_word(char **first)
     return result++;
 }
 
-char *do_glob(char **env, int wrd, char *tmp, input_t *input)
+char **do_glob(char **env, int wrd, char *tmp, input_t *input)
 {
     glob_t glob_buf;
     char **path = my_str_to_word_array(get_field(env, "PATH="), ":");
@@ -62,7 +62,7 @@ char *do_glob(char **env, int wrd, char *tmp, input_t *input)
     return commands;
 }
 
-int globing_all_file(char **env, input_t *input)
+void globing_all_file(char **env, input_t *input)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
     char *wd = malloc(sizeof(char) * 4096);
