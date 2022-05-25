@@ -30,7 +30,7 @@ void replace_aliases_in_word_parse(char **word_parse, list_t *vars)
         return;
     find_field_aliases(&word_parse[0], vars);
     for (int i = 1; word_parse[i]; i++) {
-        if (contain(word_parse[i], ';')) {
+        if (contain_any_of(word_parse[i], ";&|")) {
             find_field_aliases(&word_parse[i + 1], vars);
         }
     }

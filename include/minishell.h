@@ -247,4 +247,6 @@ int is_prev_valid(char **words, int current);
 int is_next_valid(char **words, int current);
 int check_everything(command_t **tmp, char **all[2], int *i, list_t **commands);
 
+char **get_glob(char *str);
+
 #endif
