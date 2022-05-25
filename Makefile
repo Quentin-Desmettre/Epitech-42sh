@@ -40,6 +40,7 @@ SRC = \
 	src/parse_input/edit_input.c                       \
 	src/parse_input/str_to_word_array_input.c          \
 	src/backticks/backticks.c                          \
+	src/globing/globing.c                              \
 	src/init_vars.c
 
 OBJ = $(SRC:.c=.o)
