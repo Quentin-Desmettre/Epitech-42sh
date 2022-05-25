@@ -47,7 +47,10 @@ SRC = \
 	src/init_history.c                                 \
 	src/parse_input/replace_variable.c				   \
 	src/parse_input/delete_backslash.c				   \
-	src/parse_input/aliases_in_parse.c
+	src/parse_input/aliases_in_parse.c				   \
+	src/parse_input/check_exec_manip.c 	 	  	 	   \
+	src/parse_input/call_all_check.c				   \
+	src/parse_input/generate_command.c				   \
 
 OBJ = $(SRC:.c=.o)
 

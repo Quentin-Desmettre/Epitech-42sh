@@ -7,7 +7,7 @@
 
 #include "minishell.h"
 
-char *add_separator(char *separator, char *input)
+static char *add_separator(char *separator, char *input)
 {
     int separator_type = -1;
     int before = -1;
@@ -22,4 +22,40 @@ char *add_separator(char *separator, char *input)
         before = separator_type;
     }
     return (input);
+}
+
+char **error_on_variable(char **str)
+{
+    int i;
+    int index = 0;
+    char *tmp = NULL;
+
+    for (i = 0; str[i]; i++)
+        if (contain(str[i], '$')) {
+            tmp = str[i];
+            index = index_of('$', str[i]);
+            break;
+        }
+    if (!tmp)
+        return (str);
+    for (int j = index + 1; str[i][j] && str[i][j] != ' ' &&
+    str[i][j] != '$'; j++)
+        write(2, &(str[i][j]), 1);
+    write(2, ": Undefined variable.\n", 22);
+    return (NULL);
+}
+
+char **split_words(char *input, env_t *vars)
+{
+    char **word_parse = NULL;
+    char *str_separator = ";&|><";
+
+    input = clear_str(input);
+    input = add_separator(str_separator, input);
+    word_parse = str_to_word_array(input, " ");
+    find_all_back_slash(word_parse);
+    replace_aliases_in_word_parse(word_parse, vars->aliases->commands);
+    replace_all_variable(vars->vars, word_parse, '\t');
+    replace_all_variable(vars->env, word_parse, '=');
+    return (error_on_variable(word_parse));
 }

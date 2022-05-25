@@ -5,8 +5,8 @@
 ** main.c
 */
 
-#include "../include/minishell.h"
 #include <sys/stat.h>
+#include "minishell.h"
 
 char **str_to_word_array_my(char *buff)
 {
@@ -27,19 +27,6 @@ char **str_to_word_array_my(char *buff)
     }
     map[j] = 0;
     return map;
-}
-
-char *str_copy_string(char *array)
-{
-    int j = 0;
-    int size = lenght_line(array, 0);
-    char *new_map = malloc(sizeof(char) * size);
-    if (new_map == NULL)
-        exit(84);
-    for (; array[j] != '\0'; j++)
-        new_map[j] = array[j];
-    new_map[j] = '\0';
-    return new_map;
 }
 
 histo_t *init_node(char *cmd)
@@ -72,7 +59,7 @@ int size_file(char *file)
 void give(char *file, histo_t *head)
 {
     int lu;
-    char *buff= NULL;
+    char *buff = NULL;
     char **map = NULL;
     int fd = open(file, O_RDONLY);
 

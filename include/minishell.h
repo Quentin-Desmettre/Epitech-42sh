@@ -117,7 +117,7 @@ typedef struct {
     int length;
 } backtick_t;
 
-env_t *init_vars(char **env);
+env_t *init_vars(char **env, struct termios *saved_term);
 void cd_pipe(char **args, char ***env, int o_fd, int is_pipe);
 int print_flags(int *flags, char const *home, int len_home, int o_fd);
 char *get_current_dir(void);
@@ -201,7 +201,7 @@ int var_args_valid(char **args);
 int contain_separator(char str, const char *specifier);
 char *clear_str(char *string);
 char **str_to_word_array(char const *str, char *delimiters);
-char *add_separator(char *separator, char *input);
+char **split_words(char *input, env_t *vars);
 char *get_next_line(char *base);
 
 void globing_all_file(char **env, input_t *input);
@@ -227,7 +227,6 @@ void free_history_list(histo_t *head, histo_t *temp);
 void give(char *file, histo_t *head);
 void push_node(histo_t *tete, histo_t *boulle);
 histo_t *init_node(char *cmd);
-char *str_copy_string(char *array);
 char **str_to_word_array_my(char *buff);
 int lenght_line(char *buffer, int i);
 int count_nbr(char *buff);
@@ -237,5 +236,15 @@ int search_pattern(char *pattern, char *str);
 void replace_all_variable(char **env, char **str, char spec);
 void find_all_back_slash(char **str);
 void replace_aliases_in_word_parse(char **word_parse, list_t *vars);
+
+int check_redir_out(command_t *tmp, char **err_mess, char **words, int *i);
+int check_redir_in(command_t *tmp, char **err_mess, char **words, int *i);
+int check_pipe(command_t **tmp, char **all[2], int *i, list_t **commands);
+int check_and(char **words, int i, char ***tmp, list_t **commands);
+int check_or(char **words, int i, char ***tmp, list_t **commands);
+int create_link(char **tmp, int type, list_t **commands);
+int is_prev_valid(char **words, int current);
+int is_next_valid(char **words, int current);
+int check_everything(command_t **tmp, char **all[2], int *i, list_t **commands);
 
 #endif

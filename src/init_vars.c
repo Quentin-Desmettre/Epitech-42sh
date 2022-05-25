@@ -54,7 +54,7 @@ void free_vars(env_t *vars)
     free_str_array(vars->env, 0);
 }
 
-env_t *init_vars(char **env)
+env_t *init_vars(char **env, struct termios *saved_term)
 {
     env_t *vars = malloc(sizeof(env_t));
 
@@ -64,5 +64,7 @@ env_t *init_vars(char **env)
     vars->vars = init_local(env);
     vars->history = init_history();
     open_stdin();
+    tcgetattr(0, saved_term);
+    original_termios(saved_term);
     return vars;
 }

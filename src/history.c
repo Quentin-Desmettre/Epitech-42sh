@@ -72,5 +72,5 @@ histo_t *init_history(void)
         free(head);
         head = temp;
     }
-    return head;
+    return (head);
 }

@@ -16,9 +16,7 @@ int main(int ac, char **av, char **env)
 
     if (ac != 1 || !env || !av)
         return 84;
-    vars = init_vars(env);
-    tcgetattr(0, &saved_term);
-    original_termios(&saved_term);
+    vars = init_vars(env, &saved_term);
     while (!stop) {
         set_is_exit(0);
         input = get_shell_input(vars, &stop);
