@@ -8,27 +8,6 @@
 #include <sys/stat.h>
 #include "minishell.h"
 
-char **str_to_word_array_my(char *buff)
-{
-    int size = count_nbr(buff);
-    int a = 0;
-    int j = 0;
-    char **map = malloc(sizeof(char *) * (size + 1));
-
-    (map == NULL) ? (exit(84)) : (0);
-    for (int i = 0; i != size; i++) {
-        map[i] = malloc(sizeof(char) * (lenght_line(buff, i)));
-        (map[i] == NULL) ? (exit(84)) : (0);
-    }
-    for (int i = 0; buff[i] != '\0'; i++) {
-        map[j][a] = buff[i];
-        a++;
-        (buff[i] == '\n') ? (map[j][a] = '\0', j++, a = 0) : 0;
-    }
-    map[j] = 0;
-    return map;
-}
-
 histo_t *init_node(char *cmd)
 {
     histo_t *ele = malloc(sizeof(histo_t));
@@ -39,44 +18,38 @@ histo_t *init_node(char *cmd)
     return (ele);
 }
 
-void push_node(histo_t *tete, histo_t *boulle)
+void push_node(histo_t *head, histo_t *data)
 {
-    for (int i = 0; tete->next != NULL; i++)
-        tete = tete->next;
-    tete->next = boulle;
+    for (int i = 0; head->next != NULL; i++)
+        head = head->next;
+    head->next = data;
 }
 
-int size_file(char *file)
+long size_file(char *file)
 {
     struct stat stats;
 
     if (stat(file, &stats) == 0)
         return (stats.st_size);
-    else
-        exit(84);
+    return 0;
 }
 
 void give(char *file, histo_t *head)
 {
-    int lu;
     char *buff = NULL;
     char **map = NULL;
-    long fd = open(file, O_RDONLY);
-    int gpt = fclose((FILE *)fd);
+    int fd = open(file, O_RDONLY);
+    long size = size_file(file);
 
-    gpt += 1;
-    if (fd < 0)
+    if (fd < 0 || size <= 0)
         return;
-    buff = malloc(sizeof(char) * size_file(file) + 1);
-    lu = read(fd, buff, size_file(file));
-    if (lu < 0)
-        return;
-    buff[lu] = '\0';
-    map = str_to_word_array_my(buff);
-    for (int i = 0; map[i] != NULL; i++) {
-        push_node(head, init_node(strdup(map[i])));
-        free(map[i]);
-    }
+    buff = calloc(size + 1, sizeof(char));
+    if (read(fd, buff, size) != size)
+        return free(buff);
+    map = my_str_to_word_array(buff, "\n");
+    free(buff);
+    for (int i = 0; map[i] != NULL; i++)
+        push_node(head, init_node(map[i]));
     free(map);
     close(fd);
 }

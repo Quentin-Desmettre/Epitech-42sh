@@ -28,5 +28,5 @@ int main(int ac, char **av, char **env)
         else
             free(input);
     }
-    return 0;
+    exit(0);
 }

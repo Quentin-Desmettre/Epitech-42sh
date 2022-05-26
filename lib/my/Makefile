@@ -47,8 +47,10 @@ SRC = \
 	strmanip/my_strstr.c                        \
 	strmanip/replace_str.c                      \
 	strmanip/str_array_contain.c                \
-	strmanip/strconcat.c						\
-	strmanip/str_is_num.c
+	strmanip/str_is_num.c                       \
+	strmanip/strconcat.c                        \
+	my_malloc/my_exit.c                         \
+	my_malloc/my_malloc.c
 
 OBJ = $(SRC:.c=.o)
 

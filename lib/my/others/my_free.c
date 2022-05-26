@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
+#include "libmy.h"
 
 void try_free(void *to_free)
 {
