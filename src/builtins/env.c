@@ -23,17 +23,17 @@ int exec_builtin_sec(char **args, env_t *vars, int fds[2], int tmp[2])
 
 int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
 {
-    void (*builtin[9])(char **, char ***, int, int) = {
+    void (*builtin[])(char **, char ***, int, int) = {
         &cd_pipe, &setenv_pipe, &unsetenv_pipe, NULL, NULL, NULL, NULL, NULL
-        , NULL
+        , NULL, &echo_builtin
     };
-    char *builtins[9] = {
+    char *builtins[] = {
         "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set",
-        "unset"
+        "unset", "echo", NULL
     };
     int index = index_str_in_array(builtins, args[0]);
 
-    if (index < 3)
+    if (index < 3 || index == 9)
         builtin[index](args, &vars->env, fds[1], is_pipe);
     if (index == 3)
         env_pipe(args, &vars->env, fds[1]);
@@ -46,12 +46,12 @@ int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
 
 int is_builtin(char const *word)
 {
-    char *builtins[9] = {
+    char *builtins[] = {
     "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set"
-    , "unset"
+    , "unset", "echo", NULL
     };
 
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 10; i++)
         if (my_strcmp(word, builtins[i]) == 0)
             return 1;
     return 0;
