@@ -14,8 +14,7 @@ static void delete_backslash(char **str, int i)
     char *tmp = NULL;
 
     for (int j = 0; str[i][j]; j++) {
-        if (str[i][j] == '\\' && (str[i][j + 1] == ' ' ||
-        str[i][j + 1] == '\\')) {
+        if (str[i][j] == '\\' && str[i][j + 1] != '\\') {
             index = j;
             tmp = replace(str[i], index, 1, "");
             free(str[i]);
