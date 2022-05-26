@@ -13,7 +13,7 @@ static void delete_backslash(char **str, int i)
     int index;
     char *tmp = NULL;
 
-    for (int j = 0; str[i][j]; i++) {
+    for (int j = 0; str[i][j]; j++) {
         if (str[i][j] == '\\' && (str[i][j + 1] == ' ' ||
         str[i][j + 1] == '\\')) {
             index = j;
