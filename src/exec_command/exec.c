@@ -62,7 +62,7 @@ void exec_commands(list_t *commands, env_t *vars, list_t **all_commands)
     for (int i = 0; commands; i++) {
         clear_cmds(&cur, fds, &commands);
         get_output_fd(cur, fds, &is_pipe, commands);
-        if (get_input_fd(cur, fds, pids) == MAJOR_ERROR ||
+        if (get_input_fd(cur, fds) == MAJOR_ERROR ||
         exec_command(cur, params, is_pipe, i) == MAJOR_ERROR)
             return clear_childs(pids, i, &commands);
         close_pipe(fds);

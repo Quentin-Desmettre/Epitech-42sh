@@ -36,10 +36,10 @@ char get_char_wait_for_keypress(input_t *buffer, int *send)
     return c;
 }
 
-void put_in_buffer(char c, input_t *buf, char **env)
+void put_in_buffer(char c, input_t *buf, char const *prompt)
 {
     if (c < 32)
-        return special_char(buf, c, env);
+        return special_char(buf, c, prompt);
     if (c == 127) {
         if (!buf->buf_size || buf->key_pos == 0)
             return;
@@ -59,7 +59,7 @@ void put_in_buffer(char c, input_t *buf, char **env)
     buf->key_pos += (c == 127 ? -1 : 1);
 }
 
-static char *get_command(int *stop, char **env)
+char *get_command(int *stop, char **env, char const *prompt)
 {
     static struct termios raw;
     input_t input = {0, BUFFER_SIZE, 0, 0, 0};
@@ -68,19 +68,17 @@ static char *get_command(int *stop, char **env)
     tcsetattr(0, TCSANOW, &raw);
     input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
     for (int c = 0, send = 1; ;) {
-        print_buffer(&input, env);
-        if (c == 9)
-            globing_all_file(env, &input);
+        print_buffer(&input, prompt);
+        (c == 9) ? globing_all_file(env, &input, prompt) : 0;
         c = get_char_wait_for_keypress(&input, &send);
-        if (c == EOF || c == 3 || (c == 4 && input.buf_size == 0))
+        if (c == EOF || c == CTRL_C || (c == CTRL_D && input.buf_size == 0))
             return special_input(&input, c, stop);
         if (c == '\r' || c == '\n')
             break;
-        if (send)
-            put_in_buffer(c, &input, env);
+        send ? put_in_buffer(c, &input, prompt) : 0;
     }
-    isatty(0) ? write(1, "\n\r", 2) : ((*stop) = 1);
-    isatty(0) ? tcsetattr(0, TCSANOW, original_termios(NULL)) : 0;
+    write(1, "\n\r", 2);
+    tcsetattr(0, TCSANOW, original_termios(NULL));
     !input.buf_size ? write(1, "\33[s\33[u", 6) : 0;
     return input.buffer;
 }
@@ -88,21 +86,20 @@ static char *get_command(int *stop, char **env)
 char *get_shell_input(env_t *vars, int *stop)
 {
     char *str = my_strdup("");
+    char *prompt = get_prompt(vars->env);
 
     if (!isatty(0))
         return get_next_line(str);
     write(1, "\33[s", 3);
     while (str[0] == 0) {
         free(str);
-        if (isatty(0))
-            print_input(vars->env);
-        str = get_command(stop, vars->env);
+        write(1, prompt, strlen(prompt));
+        str = get_command(stop, vars->env, prompt);
         if (!str) {
-            my_free("PPppp", vars->vars, vars->env, vars->aliases,
-            vars->history, vars);
-            print("%s", isatty(get_stdin()) ? "exit\n" : "");
+            print("exit\n");
             exit(0);
         }
     }
+    free(prompt);
     return str;
 }

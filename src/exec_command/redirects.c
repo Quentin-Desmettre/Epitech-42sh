@@ -49,7 +49,7 @@ int get_output_fd(command_t *cur, int fds[2], int *is_pipe, list_t *commands)
     return NOTHING;
 }
 
-int get_input_fd(command_t *cur, int fds[2], int *pids)
+int get_input_fd(command_t *cur, int fds[2])
 {
     if (IS_REDIR_IN(cur->redir_type) && cur->input_file)
         fds[0] = open(cur->input_file, O_RDONLY);
@@ -57,10 +57,8 @@ int get_input_fd(command_t *cur, int fds[2], int *pids)
         fds[0] = cur->input_fd;
     if (IS_REDIR_IN2(cur->redir_type)) {
         fds[0] = get_heredoc(cur->input_file);
-        if (fds[0] < 0) {
-            free(pids);
+        if (fds[0] < 0)
             return MAJOR_ERROR;
-        }
     }
     if (fds[0] < 0) {
         dprint(2, "%s: %s.\n", cur->input_file, strerror(errno));

@@ -67,6 +67,9 @@ int is_exit_glob(int change, int new_val);
     #define NOTHING_DONE 1
     #define CONNECTION_DONE 2
 
+    #define CTRL_C 3
+    #define CTRL_D 4
+
 typedef struct {
     int link_type;
     list_t *commands;
@@ -141,7 +144,7 @@ void close_pipe(int fds[2]);
 int redirect_pipe(int fds[2]);
 void kill_childs(int *pids, int size);
 int get_output_fd(command_t *cur, int fds[2], int *is_pipe, list_t *commands);
-int get_input_fd(command_t *cur, int fds[2], int *pids);
+int get_input_fd(command_t *cur, int fds[2]);
 int exec_command(command_t *cur, void *params[6], int is_pipe, int i);
 int is_exit_glob(int change, int new_val);
 int last_exit(int new_status, int val);
@@ -169,7 +172,7 @@ char *get_shell_input(env_t *vars, int *stop);
 struct termios *original_termios(struct termios *new);
 int get_input_len(char **env);
 char *end_command(input_t *input);
-void print_buffer(input_t *buf, char **env);
+void print_buffer(input_t *buf, char const *prompt);
 void reset_input_buffer(input_t *buf);
 void free_vars(env_t *vars);
 int get_final_fd(void);
@@ -177,7 +180,7 @@ void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
 char *special_input(input_t *input, char c, int *stop);
-void special_char(input_t *input, char c, char **env);
+void special_char(input_t *input, char c, char const *prompt);
 void suppr_char(input_t *buf);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
@@ -204,11 +207,12 @@ char **str_to_word_array(char const *str, char *delimiters);
 char **split_words(char *input, env_t *vars);
 char *get_next_line(char *base);
 
-void globing_all_file(char **env, input_t *input);
-void clear_term(input_t *buf, struct winsize w, char **env);
-void put_in_buffer(char c, input_t *buf, char **env);
-void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd);
-void set_print_tab(char **command, char **env, input_t *input);
+void globing_all_file(char **env, input_t *input, char const *prompt);
+void clear_term(input_t *buf, struct winsize w, char const *prompt);
+void put_in_buffer(char c, input_t *buf, char const *prompt);
+void print_tab(char **command, char const *prompt,
+int wrd_per_line, int biggest_wrd);
+void set_print_tab(char **command, input_t *input, char const *prompt);
 
 // History
 
@@ -248,5 +252,13 @@ int is_next_valid(char **words, int current);
 int check_everything(command_t **tmp, char **all[2], int *i, list_t **commands);
 
 char **get_glob(char *str);
+char *get_prompt(char **env);
+
+/// @brief Get the input from the terminal
+/// @return NULL if the input was interrupted with CTRL_D, an empty string if it
+/// was interrupted with CTRL_C, or a valid string if everything went well.
+char *get_command(int *stop, char **env, char const *prompt);
+env_t *global_env(env_t *new);
+void echo_builtin(char **args, char ***env, int o_fd, int is_pipe);
 
 #endif

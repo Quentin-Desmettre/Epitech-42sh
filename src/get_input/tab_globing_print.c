@@ -8,7 +8,8 @@
 #include "minishell.h"
 #include <glob.h>
 
-void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd)
+void print_tab(char **command,
+char const *prompt, int wrd_per_line, int biggest_wrd)
 {
     int count = 0;
 
@@ -21,11 +22,11 @@ void print_tab(char **command, char **env, int wrd_per_line, int biggest_wrd)
         dprintf(1, "%-*s\t", biggest_wrd, command[i]);
     }
     my_putstr("\n\r");
-    print_input(env);
+    my_putstr(prompt);
     dprintf(1, "\33[s\33[u");
 }
 
-void set_print_tab(char **command, char **env, input_t *input)
+void set_print_tab(char **command, input_t *input, char const *prompt)
 {
     struct winsize w;
     int biggest_wrd = 0;
@@ -38,6 +39,6 @@ void set_print_tab(char **command, char **env, input_t *input)
             biggest_wrd = tmp;
     }
     tmp = w.ws_col / (biggest_wrd + 8 - biggest_wrd % 8);
-    print_tab(command, env, tmp, biggest_wrd);
-    clear_term(input, w, env);
+    print_tab(command, prompt, tmp, biggest_wrd);
+    clear_term(input, w, prompt);
 }

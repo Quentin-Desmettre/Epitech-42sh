@@ -8,14 +8,14 @@
 #include "minishell.h"
 #include <glob.h>
 
-void replace_buffer(input_t *input, char **command, char **env)
+void replace_buffer(input_t *input, char **command, char const *prompt)
 {
     struct winsize w;
 
     ioctl(0, TIOCGWINSZ, &w);
     for (size_t i = input->buf_size; i < strlen(command[0]); i++)
-        put_in_buffer(command[0][i], input, env);
-    clear_term(input, w, env);
+        put_in_buffer(command[0][i], input, prompt);
+    clear_term(input, w, prompt);
 }
 
 int is_in_arr(char **arr, char *str)
@@ -62,7 +62,7 @@ char **do_glob(char **env, int wrd, char *tmp, input_t *input)
     return commands;
 }
 
-void globing_all_file(char **env, input_t *input)
+void globing_all_file(char **env, input_t *input, char const *prompt)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
     char *wd = malloc(sizeof(char) * 4096);
@@ -80,8 +80,8 @@ void globing_all_file(char **env, input_t *input)
     commands = do_glob(env, wrd, tmp, input);
     chdir(wd);
     if (my_str_array_len(commands) > 1)
-        set_print_tab(commands, env, input);
+        set_print_tab(commands, input, prompt);
     else if (my_str_array_len(commands) == 1)
-        replace_buffer(input, commands, env);
+        replace_buffer(input, commands, prompt);
     my_free("pp", wd, commands);
 }

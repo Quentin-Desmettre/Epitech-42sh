@@ -17,11 +17,13 @@ SRC = \
 	src/builtins/set.c                            	   \
 	src/builtins/set2.c                            	   \
 	src/builtins/unset.c                               \
+	src/builtins/echo.c                                \
 	src/globals/last_exit.c                            \
 	src/globals/reset_buffer.c                         \
 	src/globals/std_in.c                               \
 	src/globals/is_exit.c                              \
 	src/globals/out_fd.c 							   \
+	src/globals/env.c                                  \
 	src/print_input.c                                  \
 	src/get_input/shell_input.c                        \
 	src/get_input/special.c                            \

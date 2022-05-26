@@ -38,7 +38,7 @@ void suppr_all_left(input_t *input)
     }
 }
 
-void special_char(input_t *input, char c, char **env)
+void special_char(input_t *input, char c, char const *prompt)
 {
     if (c == 1)
         input->key_pos = 0;
@@ -47,7 +47,7 @@ void special_char(input_t *input, char c, char **env)
             suppr_char(input);
         else {
             write(1, "\n\r", 2);
-            print_input(env);
+            write(1, prompt, strlen(prompt));
             write(1, input->buffer, input->buf_size);
             write(1, "\33[s", 3);
         }
@@ -63,11 +63,12 @@ void special_char(input_t *input, char c, char **env)
 char *special_input(input_t *input, char c, int *stop)
 {
     if (c == EOF) {
-        (*stop) = 1;
+        stop ? (*stop) = 1 : 0;
         tcsetattr(0, TCSANOW, original_termios(NULL));
         return input->buffer;
     }
-    if (c == 3) {
+    if (c == CTRL_C) {
+        set_reset_buffer(1);
         set_last_exit(1);
         write(1, "\n\r", 2);
         write(1, "\33[s", 3);
@@ -75,8 +76,8 @@ char *special_input(input_t *input, char c, int *stop)
         free(input->buffer);
         return my_strdup("");
     }
-    if (c == 4) {
-        (*stop) = 1;
+    if (c == CTRL_D) {
+        stop ? (*stop) = 1 : 0;
         return end_command(input);
     }
     return NULL;
