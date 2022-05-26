@@ -7,26 +7,50 @@
 
 #include "minishell.h"
 
-int get_heredoc(char const *stop)
+static int read_stdin_lines(int fds[2], char const *stop)
 {
-    int fds[2];
-    char *buf;
-    env_t *vars = global_env(NULL);
+    char *buf = NULL;
 
-    set_reset_buffer(0);
-    if (pipe(fds) < 0)
-        return dprint(2, "pipe: %s.\n", strerror(errno)) ? -1 : -1;
+    while ((buf = get_next_line(buf))) {
+        if (!my_strcmp(buf, stop))
+            break;
+        dprint(fds[1], "%s\n", buf);
+    }
+    close(fds[1]);
+    return fds[0];
+}
+
+static int get_edited_lines(int fds[2], char const *stop, env_t *vars)
+{
+    char *buf;
+
     while (1) {
         write(1, "\033[s", 3);
-        if (!(buf = get_command(NULL, vars->env, "? ")) || !strcmp(stop, buf)) {
+        buf = get_command(NULL, vars->env, "? ");
+        if (!buf || (!strcmp(stop, buf) && buf[0])) {
             free(buf);
             break;
         }
-        if (!buf[0] && is_reset_buf())
-            return close_pipe(fds), set_reset_buffer(0), -1;
+        if (!buf[0] && is_reset_buf()) {
+            close_pipe(fds);
+            set_reset_buffer(0);
+            return -1;
+        }
         dprint(fds[1], "%s\n", buf);
         free(buf);
     }
     close(fds[1]);
     return fds[0];
+}
+
+int get_heredoc(char const *stop)
+{
+    int fds[2];
+
+    set_reset_buffer(0);
+    if (pipe(fds) < 0)
+        return dprint(2, "pipe: %s.\n", strerror(errno)) ? -1 : -1;
+    if (!isatty(0))
+        return read_stdin_lines(fds, stop);
+    return get_edited_lines(fds, stop, global_env(NULL));
 }
