@@ -56,7 +56,7 @@ static void return_clean_string(char **tmp, char *string, int i, int *index)
             (*tmp)[*index] = string[i];
             (*index)++;
         }
-    } else if (string[i] != ' '){
+    } else if (string[i] != ' ') {
         (*tmp)[*index] = string[i];
         (*index)++;
     }

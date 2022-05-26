@@ -7,7 +7,6 @@
 
 #include "minishell.h"
 
-
 static void delete_backslash(char **str, int i)
 {
     int index;
