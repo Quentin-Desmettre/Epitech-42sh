@@ -65,4 +65,5 @@ void print_buffer(input_t *buf, char const *prompt)
         for (int i = 0; i < cursor_l; i++)
             write(1, "\033[D\r", 3);
     }
+    buf->buf_size = my_strlen(buf->buffer);
 }

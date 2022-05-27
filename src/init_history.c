@@ -18,11 +18,18 @@ histo_t *init_node(char *cmd)
     return (ele);
 }
 
-void push_node(histo_t *head, histo_t *data)
+void push_node(histo_t *head, histo_t *data, int fd)
 {
     for (int i = 0; head->next != NULL; i++)
         head = head->next;
-    head->next = data;
+    if (my_strcmp(head->command, data->command) != 0) {
+        head->next = data;
+        write(fd, data->command, count_line(data->command));
+        write(fd, "\n", 1);
+    } else {
+        free(data->command);
+        free(data);
+    }
 }
 
 long size_file(char *file)
@@ -49,7 +56,7 @@ void give(char *file, histo_t *head)
     map = my_str_to_word_array(buff, "\n");
     free(buff);
     for (int i = 0; map[i] != NULL; i++)
-        push_node(head, init_node(map[i]));
+        push_node(head, init_node(map[i]), fd);
     free(map);
     close(fd);
 }

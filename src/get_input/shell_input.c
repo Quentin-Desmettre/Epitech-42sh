@@ -26,6 +26,8 @@ char get_char_wait_for_keypress(input_t *buffer, int *send)
         c = getchar();
         if (c == 91) {
             c = getchar();
+            buffer->up = (c == 65);
+            buffer->down = (c == 66);
             c == 68 && buffer->key_pos > 0 ? buffer->key_pos-- : 0;
             c == 67 && buffer->key_pos < buffer->buf_size ?
             buffer->key_pos++ : 0;
@@ -36,10 +38,10 @@ char get_char_wait_for_keypress(input_t *buffer, int *send)
     return c;
 }
 
-void put_in_buffer(char c, input_t *buf, char const *prompt)
+void put_in_buffer(char c, input_t *buf, char const *prompt, histo_t *history)
 {
-    if (c < 32)
-        return special_char(buf, c, prompt);
+    if (c < 32 || buf->up || buf->down)
+        return special_char(buf, c, prompt, history);
     if (c == 127) {
         if (!buf->buf_size || buf->key_pos == 0)
             return;
@@ -59,23 +61,25 @@ void put_in_buffer(char c, input_t *buf, char const *prompt)
     buf->key_pos += (c == 127 ? -1 : 1);
 }
 
-char *get_command(int *stop, char **env, char const *prompt)
+char *get_command(int *stop, char **env, char const *prompt, histo_t *history)
 {
     static struct termios raw;
-    input_t input = {0, BUFFER_SIZE, 0, 0, 0};
+    input_t input = {0, BUFFER_SIZE, 0, 0, 0, 0, 0, 0};
 
     raw.c_cc[VMIN] = 1;
     tcsetattr(0, TCSANOW, &raw);
     input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
     for (int c = 0, send = 1; ;) {
         print_buffer(&input, prompt);
-        (c == 9) ? globing_all_file(env, &input, prompt) : 0;
+        if (c == 9)
+            globing_all_file(env, &input, prompt, history);
         c = get_char_wait_for_keypress(&input, &send);
         if (c == EOF || c == CTRL_C || (c == CTRL_D && input.buf_size == 0))
             return special_input(&input, c, stop);
         if (c == '\r' || c == '\n')
             break;
-        send ? put_in_buffer(c, &input, prompt) : 0;
+        if (send || input.up || input.down)
+            put_in_buffer(c, &input, prompt, history);
     }
     write(1, "\n\r", 2);
     tcsetattr(0, TCSANOW, original_termios(NULL));
@@ -94,7 +98,7 @@ char *get_shell_input(env_t *vars, int *stop)
     while (str[0] == 0) {
         free(str);
         write(1, prompt, strlen(prompt));
-        str = get_command(stop, vars->env, prompt);
+        str = get_command(stop, vars->env, prompt, vars->history);
         if (!str) {
             print("exit\n");
             exit(0);

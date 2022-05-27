@@ -10,14 +10,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-void replace_buffer(input_t *input, char **command, char const *prompt)
+void replace_buffer(input_t *input, char **command, char const *prompt,
+histo_t *history)
 {
     struct winsize w;
 
     ioctl(0, TIOCGWINSZ, &w);
     for (size_t i = input->key_pos; i < strlen(command[0]); i++)
-        put_in_buffer(command[0][i], input, prompt);
-    put_in_buffer(' ', input, prompt);
+        put_in_buffer(command[0][i], input, prompt, history);
+    put_in_buffer(' ', input, prompt, history);
     print_buffer(input, prompt);
 }
 
@@ -101,7 +102,8 @@ char **do_glob(char **env, int wrd, char *tmp, input_t *input)
     return commands;
 }
 
-void globing_all_file(char **env, input_t *input, char const *prompt)
+void globing_all_file(char **env, input_t *input, char const *prompt,
+histo_t *history)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
     char *wd = malloc(sizeof(char) * 4096);
@@ -121,6 +123,6 @@ void globing_all_file(char **env, input_t *input, char const *prompt)
     if (my_str_array_len(commands) > 1)
         set_print_tab(commands, input, prompt);
     else if (my_str_array_len(commands) == 1)
-        replace_buffer(input, commands, prompt);
+        replace_buffer(input, commands, prompt, history);
     my_free("pp", wd, commands);
 }

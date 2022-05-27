@@ -27,9 +27,7 @@ void history_append(char *command, histo_t *head)
 
     if (fd < 0)
         return;
-    push_node(head, init_node(strdup(command)));
-    write(fd, command, count_line(command));
-    write(fd, "\n", 1);
+    push_node(head, init_node(strdup(command)), fd);
     close(fd);
 }
 

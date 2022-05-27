@@ -27,6 +27,7 @@ SRC = \
 	src/print_input.c                                  \
 	src/get_input/shell_input.c                        \
 	src/get_input/special.c                            \
+	src/get_input/arrows.c                             \
 	src/get_input/termios.c                            \
 	src/get_input/tab_globing.c                        \
 	src/get_input/tab_globing_print.c                  \

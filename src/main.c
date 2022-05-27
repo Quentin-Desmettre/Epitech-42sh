@@ -34,7 +34,7 @@ void continue_input(char **in, env_t *vars)
         return continue_input_tty(in, vars);
     while (input[strlen(input) - 1] == '\\') {
         write(1, "\33[s", 3);
-        tmp = get_command(NULL, vars->env, "? ");
+        tmp = get_command(NULL, vars->env, "? ", vars->history);
         if (!tmp)
             break;
         if (!tmp[0] && is_reset_buf()) {

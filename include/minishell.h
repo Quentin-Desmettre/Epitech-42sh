@@ -96,6 +96,9 @@ typedef struct {
     int buf_size;
     int key_pos;
     int line_offset;
+    int up;
+    int down;
+    char *tmp_str;
 } input_t;
 
 typedef struct {
@@ -180,7 +183,7 @@ void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
 char *special_input(input_t *input, char c, int *stop);
-void special_char(input_t *input, char c, char const *prompt);
+void special_char(input_t *input, char c, char const *prompt, histo_t *hist);
 void suppr_char(input_t *buf);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
@@ -207,12 +210,15 @@ char **str_to_word_array(char const *str, char *delimiters);
 char **split_words(char *input, env_t *vars);
 char *get_next_line(char *base);
 
-void globing_all_file(char **env, input_t *input, char const *prompt);
+void globing_all_file(char **env, input_t *input, char const *prompt,
+histo_t *hist);
 void clear_term(input_t *buf, struct winsize w, char const *prompt);
-void put_in_buffer(char c, input_t *buf, char const *prompt);
+void put_in_buffer(char c, input_t *buf, char const *prompt, histo_t *hist);
 void print_tab(char **command, char const *prompt,
 int wrd_per_line, int biggest_wrd);
 void set_print_tab(char **command, input_t *input, char const *prompt);
+void up_arrow(input_t *input, char const *prompt, histo_t *history);
+void down_arrow(input_t *input, char const *prompt, histo_t *history);
 
 // History
 
@@ -229,7 +235,7 @@ histo_t *init_history(void);
 /// \brief free linked list for the history
 void free_history_list(histo_t *head, histo_t *temp);
 void give(char *file, histo_t *head);
-void push_node(histo_t *tete, histo_t *boulle);
+void push_node(histo_t *head, histo_t *data, int fd);
 histo_t *init_node(char *cmd);
 char **str_to_word_array_my(char *buff);
 int lenght_line(char *buffer, int i);
@@ -257,7 +263,7 @@ char *get_prompt(char **env);
 /// @brief Get the input from the terminal
 /// @return NULL if the input was interrupted with CTRL_D, an empty string if it
 /// was interrupted with CTRL_C, or a valid string if everything went well.
-char *get_command(int *stop, char **env, char const *prompt);
+char *get_command(int *stop, char **env, char const *prompt, histo_t *history);
 env_t *global_env(env_t *new);
 void echo_builtin(char **args, char ***env, int o_fd, int is_pipe);
 
