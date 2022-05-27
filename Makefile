@@ -45,9 +45,8 @@ SRC = \
 	src/backticks/backticks.c                          \
 	src/globing/globing.c                              \
 	src/init_vars.c									   \
-	src/history.c									   \
-	src/history_lenght_func.c						   \
-	src/init_history.c                                 \
+	src/history/init_history.c                         \
+	src/history/history_manip.c                        \
 	src/parse_input/replace_variable.c				   \
 	src/parse_input/delete_backslash.c				   \
 	src/parse_input/aliases_in_parse.c				   \

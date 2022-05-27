@@ -38,7 +38,7 @@ void suppr_all_left(input_t *input)
     }
 }
 
-void special_char(input_t *input, char c, char const *prompt, histo_t *hist)
+void special_char(input_t *input, char c, char const *prompt, hist_t **hist)
 {
     if (c == 1)
         input->key_pos = 0;
@@ -59,7 +59,7 @@ void special_char(input_t *input, char c, char const *prompt, histo_t *hist)
     if (c == 21)
         suppr_all_left(input);
     if (input->up || input->down)
-        input->up ? up_arrow(input, prompt, hist) : down_arrow(input, prompt, hist);
+        input->up ? up_arrow(input, hist) : down_arrow(input, hist);
 }
 
 char *special_input(input_t *input, char c, int *stop)

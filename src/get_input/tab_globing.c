@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 
 void replace_buffer(input_t *input, char **command, char const *prompt,
-histo_t *history)
+hist_t **history)
 {
     struct winsize w;
 
@@ -103,7 +103,7 @@ char **do_glob(char **env, int wrd, char *tmp, input_t *input)
 }
 
 void globing_all_file(char **env, input_t *input, char const *prompt,
-histo_t *history)
+hist_t **history)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
     char *wd = malloc(sizeof(char) * 4096);

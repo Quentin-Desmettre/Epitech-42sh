@@ -34,7 +34,7 @@ void continue_input(char **in, env_t *vars)
         return continue_input_tty(in, vars);
     while (input[strlen(input) - 1] == '\\') {
         write(1, "\33[s", 3);
-        tmp = get_command(NULL, vars->env, "? ", vars->history);
+        tmp = get_command(NULL, vars->env, "? ", &vars->history);
         if (!tmp)
             break;
         if (!tmp[0] && is_reset_buf()) {
@@ -53,7 +53,7 @@ void start_parsing(char *input, env_t *vars)
 {
 
     continue_input(&input, vars);
-    history_append(input, vars->history);
+    history_append(input, &vars->history);
     if (input[0] && parse_for_backticks(&input, vars))
         new_parse_input(input, vars);
     else
@@ -69,6 +69,7 @@ int main(int ac, char **av, char **env)
 
     if (ac != 1 || !env || !av)
         return 84;
+    set_history_path(env);
     vars = init_vars(env, &saved_term);
     global_env(vars);
     while (!stop) {

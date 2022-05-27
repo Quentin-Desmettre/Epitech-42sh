@@ -38,7 +38,7 @@ char get_char_wait_for_keypress(input_t *buffer, int *send)
     return c;
 }
 
-void put_in_buffer(char c, input_t *buf, char const *prompt, histo_t *history)
+void put_in_buffer(char c, input_t *buf, char const *prompt, hist_t **history)
 {
     if (c < 32 || buf->up || buf->down)
         return special_char(buf, c, prompt, history);
@@ -48,9 +48,9 @@ void put_in_buffer(char c, input_t *buf, char const *prompt, histo_t *history)
         for (int i = buf->key_pos - 1; buf->buffer[i]; i++)
             buf->buffer[i] = buf->buffer[i + 1];
     } else {
-        if (buf->buf_size >= buf->buff_limit - 1) {
-            buf->buffer = realloc(buf->buffer, buf->buf_size * 2);
-            buf->buff_limit = buf->buf_size * 2;
+        if (buf->buf_size + 1 >= buf->buff_limit) {
+            buf->buffer = realloc(buf->buffer, buf->buff_limit * 2);
+            buf->buff_limit = buf->buff_limit * 2;
         }
         for (int i = buf->buf_size; i > buf->key_pos; i--)
             buf->buffer[i] = buf->buffer[i - 1];
@@ -61,18 +61,16 @@ void put_in_buffer(char c, input_t *buf, char const *prompt, histo_t *history)
     buf->key_pos += (c == 127 ? -1 : 1);
 }
 
-char *get_command(int *stop, char **env, char const *prompt, histo_t *history)
+char *get_command(int *stop, char **env, char const *prompt, hist_t **history)
 {
     static struct termios raw;
-    input_t input = {0, BUFFER_SIZE, 0, 0, 0, 0, 0, 0};
-
+    input_t input = {0, BUFFER_SIZE, 0, 0, 0, 0, 0, 0, 0};
     raw.c_cc[VMIN] = 1;
     tcsetattr(0, TCSANOW, &raw);
     input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
     for (int c = 0, send = 1; ;) {
         print_buffer(&input, prompt);
-        if (c == 9)
-            globing_all_file(env, &input, prompt, history);
+        c == 9 ? globing_all_file(env, &input, prompt, history) : 0;
         c = get_char_wait_for_keypress(&input, &send);
         if (c == EOF || c == CTRL_C || (c == CTRL_D && input.buf_size == 0))
             return special_input(&input, c, stop);
@@ -97,8 +95,9 @@ char *get_shell_input(env_t *vars, int *stop)
     write(1, "\33[s", 3);
     while (str[0] == 0) {
         free(str);
+        reset_history(&vars->history);
         write(1, prompt, strlen(prompt));
-        str = get_command(stop, vars->env, prompt, vars->history);
+        str = get_command(stop, vars->env, prompt, &vars->history);
         if (!str) {
             print("exit\n");
             exit(0);

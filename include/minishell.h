@@ -88,7 +88,8 @@ typedef struct history_s {
     char *command;
     int select;
     struct history_s *next;
-}histo_t;
+    struct history_s *prev;
+} hist_t;
 
 typedef struct {
     char *buffer;
@@ -98,11 +99,11 @@ typedef struct {
     int line_offset;
     int up;
     int down;
+    int in_history;
     char *tmp_str;
 } input_t;
 
 typedef struct {
-    histo_t *history;
     char *name;
     char *value;
 } replace_t;
@@ -112,7 +113,7 @@ typedef struct {
 } aliases_t;
 
 typedef struct {
-    histo_t *history;
+    hist_t *history;
     aliases_t *aliases;
     char **vars;
     char **env;
@@ -183,7 +184,7 @@ void set_final_fd(int fd);
 void new_parse_input(char *input, env_t *vars);
 int parse_for_backticks(char **input, env_t *vars);
 char *special_input(input_t *input, char c, int *stop);
-void special_char(input_t *input, char c, char const *prompt, histo_t *hist);
+void special_char(input_t *input, char c, char const *prompt, hist_t **hist);
 void suppr_char(input_t *buf);
 
 void alias(char **args, env_t *e, int o_fd, int is_pipe);
@@ -211,36 +212,14 @@ char **split_words(char *input, env_t *vars);
 char *get_next_line(char *base);
 
 void globing_all_file(char **env, input_t *input, char const *prompt,
-histo_t *hist);
+hist_t **history);
 void clear_term(input_t *buf, struct winsize w, char const *prompt);
-void put_in_buffer(char c, input_t *buf, char const *prompt, histo_t *hist);
+void put_in_buffer(char c, input_t *buf, char const *prompt, hist_t **history);
 void print_tab(char **command, char const *prompt,
 int wrd_per_line, int biggest_wrd);
 void set_print_tab(char **command, input_t *input, char const *prompt);
-void up_arrow(input_t *input, char const *prompt, histo_t *history);
-void down_arrow(input_t *input, char const *prompt, histo_t *history);
-
-// History
-
-/// \brief search in history the good func and return it
-char *is_up(histo_t *head);
-
-/// \brief search in history the good func and return it
-char *is_down(histo_t *head);
-
-/// \brief append note in lenked list with the new command
-void history_append(char *command, histo_t *head);
-histo_t *init_history(void);
-
-/// \brief free linked list for the history
-void free_history_list(histo_t *head, histo_t *temp);
-void give(char *file, histo_t *head);
-void push_node(histo_t *head, histo_t *data, int fd);
-histo_t *init_node(char *cmd);
-char **str_to_word_array_my(char *buff);
-int lenght_line(char *buffer, int i);
-int count_nbr(char *buff);
-int count_line(char *buff);
+void up_arrow(input_t *input, hist_t **history);
+void down_arrow(input_t *input, hist_t **history);
 
 int search_pattern(char *pattern, char *str);
 void replace_all_variable(char **env, char **str, char spec);
@@ -263,8 +242,17 @@ char *get_prompt(char **env);
 /// @brief Get the input from the terminal
 /// @return NULL if the input was interrupted with CTRL_D, an empty string if it
 /// was interrupted with CTRL_C, or a valid string if everything went well.
-char *get_command(int *stop, char **env, char const *prompt, histo_t *history);
+char *get_command(int *stop, char **env, char const *prompt, hist_t **history);
 env_t *global_env(env_t *new);
 void echo_builtin(char **args, char ***env, int o_fd, int is_pipe);
+
+hist_t *init_history(void);
+void history_append(char *command, hist_t **history);
+char *get_down(hist_t **history);
+char *get_up(hist_t **history);
+void reset_history(hist_t **history);
+int append_history_node(hist_t **head, hist_t *new);
+char *glob_history(char *new);
+void set_history_path(char **env);
 
 #endif

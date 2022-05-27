@@ -26,7 +26,7 @@ static int get_edited_lines(int fds[2], char const *stop, env_t *vars)
 
     while (1) {
         write(1, "\033[s", 3);
-        buf = get_command(NULL, vars->env, "? ", vars->history);
+        buf = get_command(NULL, vars->env, "? ", &vars->history);
         if (!buf || (!strcmp(stop, buf) && buf[0])) {
             free(buf);
             break;
