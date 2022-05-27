@@ -60,6 +60,7 @@ int curent_file_tab(char *tmp, glob_t *glob_buf)
     struct stat sb;
     int start;
 
+    glob_buf->gl_offs = 0;
     glob(tmp, GLOB_DOOFFS, NULL, glob_buf);
     for (int i = 0; glob_buf->gl_pathv[i]; i++) {
         start = stat(glob_buf->gl_pathv[i], &sb);
@@ -82,10 +83,7 @@ char **do_glob(char **env, int wrd, char *tmp, input_t *input)
     struct stat sb;
     char **path = my_str_to_word_array(get_field(env, "PATH="), ":");
     char **commands;
-    int start;
-
-    glob_buf.gl_offs = 0;
-    start = curent_file_tab(tmp, &glob_buf);
+    int start = curent_file_tab(tmp, &glob_buf);
     if (strlen(tmp) != 1)
         for (int i = 0; path[i]; i++) {
             chdir(path[i]);
@@ -109,11 +107,8 @@ void globing_all_file(char **env, input_t *input, char const *prompt)
     char *wd = malloc(sizeof(char) * 4096);
     char **commands;
     int wrd;
-
     for (wrd = input->key_pos; wrd > 0; wrd--)
-        if (input->buffer[wrd] == ' ' || input->buffer[wrd] == '\t' || input->
-        buffer[wrd] == '|' || input->buffer[wrd] == '>' || input->buffer[wrd] ==
-        '<' || input->buffer[wrd] == ';' || input->buffer[wrd] == '&') {
+        if (contain("\t| ;&<>", input->buffer[wrd])) {
             wrd++;
             break;
         }
