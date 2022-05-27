@@ -70,10 +70,6 @@ int curent_file_tab(char *tmp, glob_t *glob_buf)
             strlen(glob_buf->gl_pathv[i]) + 2), "/");
             continue;
         }
-        if (!access(glob_buf->gl_pathv[i], X_OK)) {
-            glob_buf->gl_pathv[i] = strcat(realloc(glob_buf->gl_pathv[i],
-            strlen(glob_buf->gl_pathv[i]) + 2), "*");
-        }
     }
     return glob_buf->gl_pathc;
 }
