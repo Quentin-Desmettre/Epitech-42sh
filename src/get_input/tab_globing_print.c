@@ -40,5 +40,5 @@ void set_print_tab(char **command, input_t *input, char const *prompt)
     }
     tmp = w.ws_col / (biggest_wrd + 8 - biggest_wrd % 8);
     print_tab(command, prompt, tmp, biggest_wrd);
-    clear_term(input, w, prompt);
+    print_buffer(input, prompt);
 }
