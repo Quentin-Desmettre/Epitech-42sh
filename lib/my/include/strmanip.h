@@ -9,6 +9,7 @@
     #define INCLUDE_STRMANIP_H
 
 int str_is_alphanum(char const *str);
+int char_is_alphanum(char const c);
 char *str_concat(int nb_str, ...);
 void append_str_array(char ***array, char *val);
 int my_str_array_len(char **array);

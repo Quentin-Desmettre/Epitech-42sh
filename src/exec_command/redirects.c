@@ -77,7 +77,7 @@ void *params[6], char const *command)
     char **args = dup_word_array(cur->args);
 
     signal(SIGINT, SIG_DFL);
-    if (!redirect_pipe(fds)) {
+    if (!redirect_pipe(fds) || not_global(&args)) {
         free(pids);
         exit(1);
     }

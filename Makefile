@@ -54,6 +54,7 @@ SRC = \
 	src/parse_input/check_exec_manip.c 	 	  	 	   \
 	src/parse_input/call_all_check.c				   \
 	src/parse_input/generate_command.c				   \
+	src/parse_input/globing.c						   \
 
 OBJ = $(SRC:.c=.o)
 

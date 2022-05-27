@@ -259,6 +259,8 @@ int check_everything(command_t **tmp, char **all[2], int *i, list_t **commands);
 
 char **get_glob(char *str);
 char *get_prompt(char **env);
+char **place_arr_in_arr(char **dest, char **src, int index);
+int not_global(char ***args);
 
 /// @brief Get the input from the terminal
 /// @return NULL if the input was interrupted with CTRL_D, an empty string if it
