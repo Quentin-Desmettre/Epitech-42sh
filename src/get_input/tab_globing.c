@@ -18,8 +18,8 @@ hist_t **history)
     ioctl(0, TIOCGWINSZ, &w);
     for (size_t i = input->key_pos; i < strlen(command[0]) &&
     command[0][i] != '*'; i++)
-        put_in_buffer(command[0][i], input, prompt);
-    put_in_buffer(' ', input, prompt);
+        put_in_buffer(command[0][i], input, prompt, history);
+    put_in_buffer(' ', input, prompt, history);
     print_buffer(input, prompt);
 }
 
@@ -126,6 +126,6 @@ hist_t **history)
     if (my_str_array_len(commands) > 1)
         set_print_tab(commands, input, prompt);
     else if (my_str_array_len(commands) == 1)
-        replace_buffer(input, commands, prompt);
+        replace_buffer(input, commands, prompt, history);
     my_free("pP", wd, commands);
 }

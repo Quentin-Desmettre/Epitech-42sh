@@ -86,8 +86,6 @@ int is_pipe)
         return;
     }
     set_exit_status(0);
-    if (e->aliases->commands)
-        check_glob_unalias(&args, e->aliases->commands);
     for (int i = 1; i < size && is_pipe == 0; i++)
         one_unalias(&e->aliases->commands, args[i]);
 }
