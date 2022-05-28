@@ -9,38 +9,49 @@
 #include <fnmatch.h>
 #include <glob.h>
 
-static void delete_by_in_str(char *str, char to_delete, char to_replace)
+char **get_matching_strings(char const *pattern, char **strings)
 {
-    int i;
+    char **array = calloc(1, sizeof(char *));
 
-    if (to_delete && !contain(str, to_delete))
-        append_char(&str, to_delete, 1);
-    for (i = 0; str[i] != to_delete; i++);
-    str[i] = to_replace;
+    for (int i = 0; strings[i]; i++) {
+        if (!fnmatch(pattern, strings[i], FN_FLAGS))
+            append_str_array(&array, strdup(strings[i]));
+    }
+    return array;
 }
 
-void check_glob_unsetenv(char ***args, char **e)
+char **resolve_globbings(char **args, char **strings)
 {
-    char **tmp = calloc(1, sizeof(char *));
-    int res = 0;
-    int moove = 0;
-    for (int i = 0; e[i]; i++)
-        delete_by_in_str(e[i], '=', '\0');
-    for (int i = 1; (*args)[i]; i++) {
-        for (int j = 0; e[j]; j++) {
-            res = fnmatch((*args)[i], e[j], 0);
-            !res ? append_str_array(&tmp, strdup(e[j])) : 0;
-        }
-        if (tmp) {
-            moove = my_str_array_len(tmp);
-            (*args) = place_arr_in_arr((*args), tmp, i);
-            i += moove;
-            tmp = NULL;
-            tmp = calloc(1, sizeof(char *));
-        }
+    char **solved = calloc(1, sizeof(char *));
+    char **matched;
+
+    for (int i = 1; args[i]; i++) {
+        matched = get_matching_strings(args[i], strings);
+        for (int i = 0; matched[i]; i++)
+            append_str_array(&solved, matched[i]);
+        free(matched);
     }
-    for (int i = 0; e[i]; i++)
-        delete_by_in_str(e[i], '\0', '=');
+    return solved;
+}
+
+char **resolve_unsetenv_globbings(char **args, char **env)
+{
+    int len = my_str_array_len(env);
+    char **splitted_env = malloc(sizeof(char *) * (len + 1));
+    char **tmp;
+    char **solved;
+
+    splitted_env[len] = NULL;
+    for (int i = 0; env[i]; i++) {
+        tmp = my_str_to_word_array(env[i], "=");
+        splitted_env[i] = tmp[0];
+        for (int j = 1; tmp[j]; j++)
+            free(tmp[j]);
+        free(tmp);
+    }
+    solved = resolve_globbings(args, splitted_env);
+    free_str_array(splitted_env, 0);
+    return solved;
 }
 
 char **get_glob(char *str)

@@ -20,6 +20,7 @@
     #include <termios.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <fnmatch.h>
 
     #define BUFFER_SIZE 10
 
@@ -69,6 +70,8 @@ int is_exit_glob(int change, int new_val);
 
     #define CTRL_C 3
     #define CTRL_D 4
+
+    #define FN_FLAGS FNM_NOESCAPE | FNM_PATHNAME | FNM_PERIOD
 
 typedef struct {
     int link_type;
@@ -267,5 +270,6 @@ char *glob_history(char *new);
 void set_history_path(char **env);
 char **get_paths(void);
 char *get_oldwd(void);
+char **resolve_globbings(char **args, char **strings);
 
 #endif

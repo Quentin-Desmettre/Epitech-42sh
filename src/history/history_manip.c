@@ -21,7 +21,7 @@ void set_history_path(char **env)
     char const *home = get_field(env, "HOME=");
     char *path = malloc(sizeof(char) * (my_strlen(home) + 15));
 
-    path = my_strcat((char *)home, "/.42sh_history");
+    path = str_concat(2, home, "/.42sh_history");
     glob_history(path);
 }
 

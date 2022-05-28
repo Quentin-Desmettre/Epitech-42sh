@@ -85,7 +85,7 @@ void alias(char **args, env_t *e, int o_fd, int is_pipe)
 {
     int size = my_str_array_len(args);
 
-    set_exit_status(0);
+    set_last_exit(0);
     if (size == 1)
         print_alias(&e->aliases->commands, o_fd);
     if (size == 2)
