@@ -142,7 +142,7 @@ void unsetenv_pipe(char **args, char ***e, int o_fd, int is_pipe);
 command_t *create_command(void);
 void free_command(void *commnd);
 void exec_commands(list_t *commands, env_t *vars, list_t **all_commands);
-char const *find_command(char const *str, char **env);
+char const *find_command(char const *str);
 void exec_args(char const *prog, char **args, char **env);
 void close_pipe(int fds[2]);
 int redirect_pipe(int fds[2]);
@@ -215,7 +215,7 @@ char **str_to_word_array(char const *str, char *delimiters);
 char **split_words(char *input, env_t *vars);
 char *get_next_line(char *base);
 
-void globing_all_file(char **env, input_t *input, char const *prompt,
+void globing_all_file(input_t *input, char const *prompt,
 hist_t **history);
 void clear_term(input_t *buf, struct winsize w, char const *prompt);
 void put_in_buffer(char c, input_t *buf, char const *prompt, hist_t **history);
@@ -250,7 +250,7 @@ void check_glob_unalias(char ***args, list_t *commands);
 /// @brief Get the input from the terminal
 /// @return NULL if the input was interrupted with CTRL_D, an empty string if it
 /// was interrupted with CTRL_C, or a valid string if everything went well.
-char *get_command(int *stop, char **env, char const *prompt, hist_t **history);
+char *get_command(int *stop, char const *prompt, hist_t **history);
 env_t *global_env(env_t *new);
 void echo_builtin(char **args, char ***env, int o_fd, int is_pipe);
 
@@ -262,5 +262,7 @@ void reset_history(hist_t **history);
 int append_history_node(hist_t **head, hist_t *new);
 char *glob_history(char *new);
 void set_history_path(char **env);
+char **get_paths(void);
+char *get_oldwd(void);
 
 #endif

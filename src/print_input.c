@@ -35,20 +35,6 @@ static char *get_raw_dir(void)
     return dir;
 }
 
-void print_input(char **env)
-{
-    char const *user = get_field(env, "USER=");
-    char const *host = get_field(env, "HOSTNAME=");
-    char *dir = get_raw_dir();
-
-    if (host[0] == 0)
-        host = get_field(env, "HOST=");
-    if (my_strcmp(user, dir) == 0)
-        re_alloc(&dir, my_strdup("~"), 1);
-    print("[%s@%s %s]$ ", user, host, dir);
-    free(dir);
-}
-
 char *get_prompt(char **env)
 {
     char const *user = get_field(env, "USER=");

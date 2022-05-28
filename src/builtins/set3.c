@@ -73,9 +73,9 @@ char **loop_call_set(int i, char **arr)
 
 char *get_path(char **env)
 {
-    char *path = strdup(get_field(env, "PATH") + 1);
+    char *path = strdup(get_field(env, "PATH="));
 
-    if (strcmp(path, "/") == 0) {
+    if (!path[0] || strcmp(path, "/") == 0) {
         free(path);
         path = strdup("/usr/bin /bin");
     }

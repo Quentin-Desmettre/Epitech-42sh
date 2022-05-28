@@ -61,7 +61,7 @@ void put_in_buffer(char c, input_t *buf, char const *prompt, hist_t **history)
     buf->key_pos += (c == 127 ? -1 : 1);
 }
 
-char *get_command(int *stop, char **env, char const *prompt, hist_t **history)
+char *get_command(int *stop, char const *prompt, hist_t **history)
 {
     static struct termios raw;
     input_t input = {0, BUFFER_SIZE, 0, 0, 0, 0, 0, 0, 0};
@@ -70,7 +70,7 @@ char *get_command(int *stop, char **env, char const *prompt, hist_t **history)
     input.buffer = calloc(1, sizeof(char) * BUFFER_SIZE);
     for (int c = 0, send = 1; ;) {
         print_buffer(&input, prompt);
-        c == 9 ? globing_all_file(env, &input, prompt, history) : 0;
+        c == 9 ? globing_all_file(&input, prompt, history) : 0;
         c = get_char_wait_for_keypress(&input, &send);
         if (c == EOF || c == CTRL_C || (c == CTRL_D && input.buf_size == 0))
             return special_input(&input, c, stop);
@@ -97,7 +97,7 @@ char *get_shell_input(env_t *vars, int *stop)
         free(str);
         reset_history(&vars->history);
         write(1, prompt, strlen(prompt));
-        str = get_command(stop, vars->env, prompt, &vars->history);
+        str = get_command(stop, prompt, &vars->history);
         if (!str) {
             print("exit\n");
             exit(0);

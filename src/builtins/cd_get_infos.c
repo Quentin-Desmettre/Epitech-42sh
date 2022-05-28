@@ -59,10 +59,11 @@ int get_cd_flags(char *str, int *flags)
 
 char *get_dir(char const *dir, char **env, char const *home)
 {
+    (void)env;
     if (!dir)
         return my_strdup(home);
     else if (!my_strcmp(dir, "-"))
-        return my_strdup(get_field(env, "OLDPWD="));
+        return my_strdup(get_oldwd());
     else
         return my_strdup(dir);
 }

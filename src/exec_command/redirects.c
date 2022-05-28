@@ -102,7 +102,7 @@ int exec_command(command_t *cur, void *params[6], int is_pipe, int i)
     if (is_builtin(cur->args[0]))
         pids[i] = exec_builtin_fd(cur->args, vars, fds, is_pipe);
     else {
-        command = find_command(cur->args[0], vars->env);
+        command = find_command(cur->args[0]);
         pids[i] = fork();
         *cannot_find = (command && (pids[i] >= 0)) ? *cannot_find : 1;
         if (pids[i] < 0) {
