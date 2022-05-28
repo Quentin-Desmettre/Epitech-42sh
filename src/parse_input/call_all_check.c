@@ -25,5 +25,3 @@ int check_everything(command_t **tmp, char **all[2], int *i, list_t **commands)
         append_str_array(&(*tmp)->args, strdup(all[1][*i]));
     return NOTHING_DONE;
 }
-
-

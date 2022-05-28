@@ -29,7 +29,6 @@ static int check_bracket(char const *str)
     return 0;
 }
 
-
 static int check_stars_or_interrogative(char ***args, int *i)
 {
     char **tmp;
@@ -53,7 +52,6 @@ static int check_stars_or_interrogative(char ***args, int *i)
 
 int not_global(char ***args)
 {
-
     for (int i = 0; (*args)[i]; i++)
         if (check_stars_or_interrogative(args, &i))
             return 1;
