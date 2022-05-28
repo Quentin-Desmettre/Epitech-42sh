@@ -40,10 +40,11 @@ void set_value(char **args, replace_t *new)
 {
     int size = my_str_array_len(args);
     char *all = malloc(1);
+    int add = size > 3 ? 2 : 0;
 
     all[0] = '\0';
     for (int i = 2; i < size; i++) {
-        all = realloc(all, strlen(args[i]) + strlen(all) + 2);
+        all = realloc(all, strlen(args[i]) + strlen(all) + 2 + add);
         if (i == 2 && size > 3)
             strcat(all, "(");
         if (i != 2)
