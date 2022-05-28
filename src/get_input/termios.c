@@ -34,7 +34,7 @@ void reset_input_buffer(input_t *buf)
 
 void clear_term(input_t *buf, struct winsize w, char const *prompt)
 {
-    int tot_size = buf->buf_size + 1 + strlen(prompt);
+    int tot_size = buf->buf_size - 1 + strlen(prompt);
 
     write(1, "\33[u", 3);
     write(1, "\33[2K\r", 5);
