@@ -7,7 +7,7 @@
 
 #include "minishell.h"
 
-void continue_input_tty(char **in, env_t *vars)
+void continue_input_tty(char **in)
 {
     char *tmp = NULL;
     char *input = *in;
@@ -31,10 +31,10 @@ void continue_input(char **in, env_t *vars)
     char *input = *in;
 
     if (!isatty(0))
-        return continue_input_tty(in, vars);
+        return continue_input_tty(in);
     while (input[strlen(input) - 1] == '\\') {
         write(1, "\33[s", 3);
-        tmp = get_command(NULL, vars->env, "? ", &vars->history);
+        tmp = get_command(NULL, "? ", &vars->history);
         if (!tmp)
             break;
         if (!tmp[0] && is_reset_buf()) {
@@ -51,7 +51,6 @@ void continue_input(char **in, env_t *vars)
 
 void start_parsing(char *input, env_t *vars)
 {
-
     continue_input(&input, vars);
     history_append(input, &vars->history);
     if (input[0] && parse_for_backticks(&input, vars))

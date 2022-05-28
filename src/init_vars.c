@@ -16,8 +16,6 @@ static char **init_local(char **env)
     args[1] = get_path(env);
     args[2] = NULL;
     strcpy(args[0], "path");
-    if (!args[1][0])
-        args[1] = strdup("/bin:/usr/bin");
     set(args, &vars, 1, 0);
     free(args[1]);
     strcpy(args[0], "cwd");

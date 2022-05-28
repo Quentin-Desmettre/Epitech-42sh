@@ -10,12 +10,15 @@
 char **get_paths(void)
 {
     env_t *vars = global_env(NULL);
-    char const *path = get_field(vars->vars, "path\t");
+    char const *path = get_field(vars->env, "PATH=");
+    char const *splitter = ":";
     char **paths;
 
-    if (!path[0])
-        path = get_field(vars->env, "PATH=");
-    paths = my_str_to_word_array(path, ":");
+    if (!path[0]) {
+        path = get_field(vars->vars, "path\t");
+        splitter = " ()";
+    }
+    paths = my_str_to_word_array(path, splitter);
     return paths;
 }
 
@@ -48,7 +51,7 @@ char *tmp, char *err_mess, char const *str)
     return tmp;
 }
 
-char const *find_command(char const *str, char **env)
+char const *find_command(char const *str)
 {
     char **paths = get_paths();
     char *tmp = NULL;

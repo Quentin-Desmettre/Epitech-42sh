@@ -81,11 +81,11 @@ int curent_file_tab(char *tmp, glob_t *glob_buf)
     return glob_buf->gl_pathc;
 }
 
-char **do_glob(char **env, char *tmp)
+char **do_glob(char *tmp)
 {
     glob_t glob_buf;
     struct stat sb;
-    char **path = my_str_to_word_array(get_field(env, "PATH="), ":");
+    char **path = get_paths();
     char **commands;
     int start = curent_file_tab(tmp, &glob_buf);
     if (strlen(tmp) != 1)
@@ -105,7 +105,7 @@ char **do_glob(char **env, char *tmp)
     return commands;
 }
 
-void globing_all_file(char **env, input_t *input, char const *prompt,
+void globing_all_file(input_t *input, char const *prompt,
 hist_t **history)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
@@ -121,7 +121,7 @@ hist_t **history)
     tmp[input->key_pos - wrd] = '\0';
     strcat(tmp, "*");
     getcwd(wd, 4096);
-    commands = do_glob(env, tmp);
+    commands = do_glob(tmp);
     chdir(wd);
     if (my_str_array_len(commands) > 1)
         set_print_tab(commands, input, prompt);

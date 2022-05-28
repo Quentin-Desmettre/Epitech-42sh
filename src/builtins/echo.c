@@ -7,6 +7,16 @@
 
 #include "minishell.h"
 
+char *get_oldwd(void)
+{
+    env_t *vars = global_env(NULL);
+    char const *old = get_field(vars->vars, "owd\t");
+
+    if (!old[0])
+        old = get_field(vars->env, "OLDPWD=");
+    return strdup(old);
+}
+
 void echo_builtin(char **args, char ***env, int o_fd, int is_pipe)
 {
     (void)is_pipe;
