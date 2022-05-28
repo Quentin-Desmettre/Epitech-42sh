@@ -14,7 +14,7 @@ static char **init_local(char **env)
 
     vars[0] = NULL;
     args[0] = malloc(5);
-    args[1] = strdup(get_field(env, "PATH") + 1);
+    args[1] = get_path(env);
     args[2] = NULL;
     strcpy(args[0], "path");
     set(args, &vars, 1, 0);

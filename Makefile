@@ -16,6 +16,7 @@ SRC = \
 	src/builtins/unalias.c                             \
 	src/builtins/set.c                            	   \
 	src/builtins/set2.c                            	   \
+	src/builtins/set3.c                            	   \
 	src/builtins/unset.c                               \
 	src/builtins/echo.c                                \
 	src/globals/last_exit.c                            \

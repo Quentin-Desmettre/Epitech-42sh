@@ -75,8 +75,6 @@ int var_args_valid(char **args)
 
     if (!args[1])
         return 0;
-    if (args[2] && args[3])
-        return (dprint(2, "set: Too many arguments.\n") ? 0 : 0);
     my_getnbr(args[1], &is_error);
     return 1;
 }

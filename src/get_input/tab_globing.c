@@ -15,7 +15,8 @@ void replace_buffer(input_t *input, char **command, char const *prompt)
     struct winsize w;
 
     ioctl(0, TIOCGWINSZ, &w);
-    for (size_t i = input->key_pos; i < strlen(command[0]); i++)
+    for (size_t i = input->key_pos; i < strlen(command[0]) &&
+    command[0][i] != '*'; i++)
         put_in_buffer(command[0][i], input, prompt);
     put_in_buffer(' ', input, prompt);
     print_buffer(input, prompt);
@@ -42,7 +43,8 @@ char **one_word(char **first)
             result[j] = first[i];
             j++;
             result[j] = NULL;
-        }
+        } else
+            free(first[i]);
     }
     return result++;
 }
@@ -70,14 +72,15 @@ int curent_file_tab(char *tmp, glob_t *glob_buf)
             continue;
         }
         if (!access(glob_buf->gl_pathv[i], X_OK)) {
-            glob_buf->gl_pathv[i] = strcat(realloc(glob_buf->gl_pathv[i],
-            strlen(glob_buf->gl_pathv[i]) + 2), "*");
+            glob_buf->gl_pathv[i] =
+            strcat(realloc(glob_buf->gl_pathv[i], strlen(glob_buf->gl_pathv[i])
+            + 2), "*");
         }
     }
     return glob_buf->gl_pathc;
 }
 
-char **do_glob(char **env, int wrd, char *tmp, input_t *input)
+char **do_glob(char **env, char *tmp)
 {
     glob_t glob_buf;
     struct stat sb;
@@ -97,7 +100,7 @@ char **do_glob(char **env, int wrd, char *tmp, input_t *input)
         }
     }
     commands = one_word(glob_buf.gl_pathv);
-    my_free("P", path);
+    my_free("Pp", path, glob_buf.gl_pathv);
     return commands;
 }
 
@@ -116,11 +119,11 @@ void globing_all_file(char **env, input_t *input, char const *prompt)
     tmp[input->key_pos - wrd] = '\0';
     strcat(tmp, "*");
     getcwd(wd, 4096);
-    commands = do_glob(env, wrd, tmp, input);
+    commands = do_glob(env, tmp);
     chdir(wd);
     if (my_str_array_len(commands) > 1)
         set_print_tab(commands, input, prompt);
     else if (my_str_array_len(commands) == 1)
         replace_buffer(input, commands, prompt);
-    my_free("pp", wd, commands);
+    my_free("pP", wd, commands);
 }
