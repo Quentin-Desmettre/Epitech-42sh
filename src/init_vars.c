@@ -23,7 +23,7 @@ static char **init_local(char **env)
     set(args, &vars, 1, 0);
     free(args[1]);
     strcpy(args[0], "owd");
-    args[1] = strdup(get_field(env, "OLDPWD="));
+    args[1] = 0;
     set(args, &vars, 1, 0);
     my_free("P", args);
     return vars;

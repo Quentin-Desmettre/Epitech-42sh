@@ -217,6 +217,9 @@ char *get_next_line(char *base);
 
 void globing_all_file(input_t *input, char const *prompt,
 hist_t **history);
+void replace_buffer(input_t *input, char **command, char const *prompt,
+hist_t **history);
+int is_in_arr(char **arr, char *str);
 void clear_term(input_t *buf, struct winsize w, char const *prompt);
 void put_in_buffer(char c, input_t *buf, char const *prompt, hist_t **history);
 void print_tab(char **command, char const *prompt,

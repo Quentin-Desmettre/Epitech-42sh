@@ -10,28 +10,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-void replace_buffer(input_t *input, char **command, char const *prompt,
-hist_t **history)
-{
-    struct winsize w;
-
-    ioctl(0, TIOCGWINSZ, &w);
-    for (size_t i = input->key_pos; i < strlen(command[0]) &&
-    command[0][i] != '*'; i++)
-        put_in_buffer(command[0][i], input, prompt, history);
-    put_in_buffer(' ', input, prompt, history);
-    print_buffer(input, prompt);
-}
-
-int is_in_arr(char **arr, char *str)
-{
-    for (int i = 0; arr[i]; i++) {
-        if (strcmp(str, arr[i]) == 0)
-            return 1;
-    }
-    return 0;
-}
-
 char **one_word(char **first)
 {
     int size = my_str_array_len(first);
