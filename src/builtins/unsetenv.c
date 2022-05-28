@@ -55,6 +55,7 @@ void unsetenv_pipe(char **args, char ***e, int o_fd, int is_pipe)
     set_last_exit(0);
     if (is_pipe)
         return;
+    check_glob_unsetenv(&args, *e);
     for (int i = 1; args[i]; i++) {
         index = index_of_key(envs, args[i]);
         if (index < 0)
