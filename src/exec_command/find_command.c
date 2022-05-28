@@ -7,6 +7,18 @@
 
 #include "minishell.h"
 
+char **get_paths(void)
+{
+    env_t *vars = global_env(NULL);
+    char const *path = get_field(vars->vars, "path\t");
+    char **paths;
+
+    if (!path[0])
+        path = get_field(vars->env, "PATH=");
+    paths = my_str_to_word_array(path, ":");
+    return paths;
+}
+
 static char const *get_local_file(char const *str)
 {
     char *tmp = my_strdup(str);
@@ -38,7 +50,7 @@ char *tmp, char *err_mess, char const *str)
 
 char const *find_command(char const *str, char **env)
 {
-    char **paths = my_str_to_word_array(get_field(env, "PATH="), ":");
+    char **paths = get_paths();
     char *tmp = NULL;
     char *err_mess = NULL;
 

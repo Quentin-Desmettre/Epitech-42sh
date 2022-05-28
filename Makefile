@@ -28,6 +28,7 @@ SRC = \
 	src/print_input.c                                  \
 	src/get_input/shell_input.c                        \
 	src/get_input/special.c                            \
+	src/get_input/arrows.c                             \
 	src/get_input/termios.c                            \
 	src/get_input/tab_globing.c                        \
 	src/get_input/tab_globing_print.c                  \
@@ -45,15 +46,15 @@ SRC = \
 	src/backticks/backticks.c                          \
 	src/globing/globing.c                              \
 	src/init_vars.c									   \
-	src/history.c									   \
-	src/history_lenght_func.c						   \
-	src/init_history.c                                 \
+	src/history/init_history.c                         \
+	src/history/history_manip.c                        \
 	src/parse_input/replace_variable.c				   \
 	src/parse_input/delete_backslash.c				   \
 	src/parse_input/aliases_in_parse.c				   \
 	src/parse_input/check_exec_manip.c 	 	  	 	   \
 	src/parse_input/call_all_check.c				   \
 	src/parse_input/generate_command.c				   \
+	src/parse_input/globing.c						   \
 
 OBJ = $(SRC:.c=.o)
 

@@ -9,22 +9,23 @@
 
 static char **init_local(char **env)
 {
-    char **vars = malloc(sizeof(char *) * 1);
-    char **args = malloc(sizeof(char *) * 3);
+    char **vars = calloc(1, sizeof(char *) * 1);
+    char **args = calloc(1, sizeof(char *) * 3);
 
-    vars[0] = NULL;
     args[0] = malloc(5);
     args[1] = get_path(env);
     args[2] = NULL;
     strcpy(args[0], "path");
+    if (!args[1][0])
+        args[1] = strdup("/bin:/usr/bin");
     set(args, &vars, 1, 0);
     free(args[1]);
     strcpy(args[0], "cwd");
-    args[1] = strdup(get_field(env, "PWD") + 1);
+    args[1] = strdup(get_field(env, "PWD="));
     set(args, &vars, 1, 0);
     free(args[1]);
     strcpy(args[0], "owd");
-    args[1] = 0;
+    args[1] = strdup(get_field(env, "OLDPWD="));
     set(args, &vars, 1, 0);
     my_free("P", args);
     return vars;

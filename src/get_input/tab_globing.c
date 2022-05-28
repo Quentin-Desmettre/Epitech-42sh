@@ -10,7 +10,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-void replace_buffer(input_t *input, char **command, char const *prompt)
+void replace_buffer(input_t *input, char **command, char const *prompt,
+hist_t **history)
 {
     struct winsize w;
 
@@ -104,7 +105,8 @@ char **do_glob(char **env, char *tmp)
     return commands;
 }
 
-void globing_all_file(char **env, input_t *input, char const *prompt)
+void globing_all_file(char **env, input_t *input, char const *prompt,
+hist_t **history)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
     char *wd = malloc(sizeof(char) * 4096);

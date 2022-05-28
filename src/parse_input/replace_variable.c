@@ -22,9 +22,7 @@ static void get_variable(char **str, const char *source, int *len_var,
 int index_var)
 {
     for (int i = index_var; source[i]; i++, (*len_var)++)
-        if (source[i] == ' ' ||
-        (i > 0 && source[i - 1] == ')') ||
-        source [i] == '$' || source[i] == '\0')
+        if (!char_is_alphanum(source[i]))
             break;
     (*str) = malloc(sizeof(char) * (*len_var + 1));
     for (int i = 0; i < (*len_var) && source[index_var + i]; i++)
@@ -66,9 +64,7 @@ static void set_loop_to_replace(char **str, char **env, char spec)
 
 void replace_all_variable(char **env, char **str, char spec)
 {
-    for (int i = 0; str[i]; i++) {
-        if (contain(str[i], '$')) {
+    for (int i = 0; str[i]; i++)
+        if (contain(str[i], '$'))
             set_loop_to_replace(&str[i], env, spec);
-        }
-    }
 }
