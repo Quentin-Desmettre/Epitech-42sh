@@ -57,5 +57,7 @@ char **split_words(char *input, env_t *vars)
     replace_aliases_in_word_parse(word_parse, vars->aliases->commands);
     replace_all_variable(vars->vars, word_parse, '\t');
     replace_all_variable(vars->env, word_parse, '=');
+    if (word_parse && !word_parse[0])
+        return NULL;
     return (error_on_variable(word_parse));
 }
