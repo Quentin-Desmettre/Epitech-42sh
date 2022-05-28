@@ -10,15 +10,9 @@
 void var_pipe(char ***e, int o_fd)
 {
     char **env = *e;
-    char **tmp;
 
     for (int i = 0; env[i]; i++) {
-        tmp = my_str_to_word_array(env[i], "\t");
-        if (tmp[1] && contain(tmp[1], ' ')) {
-            dprint(1, "%s\t(%s)\n", tmp[0], tmp[1]);
-        } else
-            dprint(o_fd, "%s\n", env[i]);
-        my_free("p", tmp);
+        dprint(o_fd, "%s\n", env[i]);
     }
     set_last_exit(0);
 }
