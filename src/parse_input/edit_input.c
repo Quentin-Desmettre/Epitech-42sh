@@ -58,6 +58,6 @@ char **split_words(char *input, env_t *vars)
     replace_all_variable(vars->vars, word_parse, '\t');
     replace_all_variable(vars->env, word_parse, '=');
     if (word_parse && !word_parse[0])
-        return NULL;
+        return (NULL);
     return (error_on_variable(word_parse));
 }
