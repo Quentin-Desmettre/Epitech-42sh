@@ -55,18 +55,20 @@ int set(char **args, char ***var, __attribute__((unused))int o_fd, int is_pipe)
 
 void setvar_pipe(char **args, char ***var, int o_fd, int is_pipe)
 {
-    char **arr;
-    int tmp;
+    char **arr = 0;
+    char **array;
+    int tmp = 0;
 
+    arr = set_arr_var(args);
     if (!var_args_valid(args)) {
-        args[1] ? set_last_exit(1) : env_pipe(args, var, o_fd);
+        args[1] ? set_last_exit(1) : var_pipe(var, o_fd);
         return;
     }
-    for (int i = 1; args[i]; i++) {
-        arr = my_str_to_word_array(args[i], "=");
-        tmp = set(arr, var, o_fd, is_pipe);
+    for (int i = 0; arr[i]; i++) {
+        array = loop_call_set(i, arr);
+        tmp = set(array, var, o_fd, is_pipe);
         set_last_exit(tmp);
-        free_str_array(arr, 0);
+        my_free("P", array);
         if (tmp == 1)
             return;
     }

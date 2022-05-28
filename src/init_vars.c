@@ -13,7 +13,8 @@ static char **init_local(char **env)
     char **args = calloc(1, sizeof(char *) * 3);
 
     args[0] = malloc(5);
-    args[1] = strdup(get_field(env, "PATH="));
+    args[1] = get_path(env);
+    args[2] = NULL;
     strcpy(args[0], "path");
     if (!args[1][0])
         args[1] = strdup("/bin:/usr/bin");

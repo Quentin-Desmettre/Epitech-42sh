@@ -192,6 +192,10 @@ void unalias(char **args, env_t *e, int o_fd, int is_pipe);
 void rm_alias(void *alias);
 
 void setvar_pipe(char **args, char ***var, int o_fd, int is_pipe);
+void var_pipe(char ***e, int o_fd);
+char **set_arr_var(char **args);
+char *get_path(char **env);
+char **loop_call_set(int i, char **arr);
 void unsetvar_pipe(char **args, char ***e, int o_fd, int is_pipe);
 int index_of_key(char **env, char const *key);
 int var_is_key(char const *test, char const *field);

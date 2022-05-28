@@ -7,11 +7,30 @@
 
 #include "minishell.h"
 
+void cd_change_local(env_t *vars)
+{
+    char **args = malloc(sizeof(char *) * 3);
+
+    args[0] = malloc(5);
+    args[1] = strdup(get_field(vars->env, "PATH") + 1);
+    args[2] = NULL;
+    strcpy(args[0], "cwd");
+    args[1] = strdup(get_field(vars->env, "PWD") + 1);
+    set(args, &vars->vars, 1, 0);
+    free(args[1]);
+    strcpy(args[0], "owd");
+    args[1] = strdup(get_field(vars->env, "OLDPWD") + 1);
+    set(args, &vars->vars, 1, 0);
+    my_free("P", args);
+}
+
 int exec_builtin_sec(char **args, env_t *vars, int fds[2], int tmp[2])
 {
     int is_pipe = tmp[0];
     int index = tmp[1];
 
+    if (index == 0)
+        cd_change_local(vars);
     if (index == 6)
         unalias(args, vars, fds[1], is_pipe);
     if (index == 7)
