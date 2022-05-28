@@ -34,6 +34,7 @@ SRC = \
 	src/get_input/tab_globing_print.c                  \
 	src/main.c                                         \
 	src/parse_input/heredoc.c                          \
+	src/parse_input/history_input.c                    \
 	src/parse_input/split_semicolon.c                  \
 	src/exec_command/find_command.c                    \
 	src/exec_command/exec.c                            \

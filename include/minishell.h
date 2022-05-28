@@ -272,4 +272,6 @@ char **get_paths(void);
 char *get_oldwd(void);
 char **resolve_globbings(char **args, char **strings);
 char **resolve_unsetenv_globbings(char **args, char **env);
+char *replace_history(char *str, env_t *vars);
+
 #endif

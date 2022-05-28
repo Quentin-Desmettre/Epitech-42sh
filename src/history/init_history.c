@@ -7,6 +7,23 @@
 
 #include "minishell.h"
 
+int is_command_valid(char *command)
+{
+    if (!command)
+        return 0;
+    for (int i = 0; command[i]; i++) {
+        if (command[i] == '!')
+            return 0;
+    }
+    for (int i = 0; command[i]; i++) {
+        if (command[i] != ' ' && command[i] != '\t')
+            break;
+        if (i == my_strlen(command) - 1)
+            return 0;
+    }
+    return 1;
+}
+
 char *get_up(hist_t **history)
 {
     hist_t *tmp = *history;
@@ -44,6 +61,8 @@ void history_append(char *command, hist_t **history)
     hist_t *data;
     int fd = open(glob_history(NULL), O_RDWR | O_CREAT | O_APPEND, 0644);
 
+    if (is_command_valid(command) == 0)
+        return;
     data = malloc(sizeof(hist_t));
     data->command = my_strdup(command);
     if (!append_history_node(history, data)) {
