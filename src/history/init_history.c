@@ -63,19 +63,21 @@ hist_t *init_history(void)
     hist_t *history = NULL;
     int fd_create = open(glob_history(NULL), O_RDWR | O_CREAT, 0644);
     FILE *fd = fopen(glob_history(NULL), "r+");
+    char *buffer = NULL;
     size_t size = 0;
     hist_t *data;
 
     if (fd_create == -1)
         return NULL;
     close(fd_create);
-    for (char *buffer = NULL; getline(&buffer, &size, fd) > 0; free(buffer)) {
+    for (; getline(&buffer, &size, fd) > 0; free(buffer)) {
         data = malloc(sizeof(hist_t));
         memset(data, 0, sizeof(hist_t));
         data->command = my_strdup(buffer);
         append_history_node(&history, data);
         size = 0;
     }
+    buffer ? free(buffer) : 0;
     fclose(fd);
     return history;
 }
