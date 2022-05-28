@@ -63,5 +63,5 @@ void unsetvar_pipe(char **args, char ***e, int o_fd, int is_pipe)
         free(vars[index]);
         rotate_var(vars, index);
     }
-    free_str_array(args);
+    free_str_array(args, 0);
 }

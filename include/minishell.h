@@ -271,5 +271,5 @@ void set_history_path(char **env);
 char **get_paths(void);
 char *get_oldwd(void);
 char **resolve_globbings(char **args, char **strings);
-
+char **resolve_unsetenv_globbings(char **args, char **env);
 #endif
