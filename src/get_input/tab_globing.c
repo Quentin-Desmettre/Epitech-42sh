@@ -54,7 +54,10 @@ int curent_file_tab(char *tmp, glob_t *glob_buf)
             glob_buf->gl_pathv[i] =
             strcat(realloc(glob_buf->gl_pathv[i], strlen(glob_buf->gl_pathv[i])
             + 2), "*");
+            continue;
         }
+        if (contain(tmp, '/'))
+            remove_string_arr(glob_buf->gl_pathv, i--);
     }
     return glob_buf->gl_pathc;
 }
@@ -66,7 +69,7 @@ char **do_glob(char *tmp)
     char **path = get_paths();
     char **commands;
     int start = curent_file_tab(tmp, &glob_buf);
-    if (strlen(tmp) != 1)
+    if (strlen(tmp) != 1 && !contain(tmp, '/'))
         for (int i = 0; path[i]; i++) {
             chdir(path[i]);
             glob(tmp, GLOB_DOOFFS | GLOB_APPEND, NULL, &glob_buf);
@@ -102,7 +105,7 @@ hist_t **history)
     commands = do_glob(tmp);
     chdir(wd);
     if (my_str_array_len(commands) > 1)
-        set_print_tab(commands, input, prompt);
+        set_print_tab(commands, input, prompt, tmp);
     else if (my_str_array_len(commands) == 1)
         replace_buffer(input, commands, prompt, history);
     my_free("pP", wd, commands);

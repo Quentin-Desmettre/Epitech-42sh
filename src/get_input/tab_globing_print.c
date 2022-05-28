@@ -9,9 +9,11 @@
 #include <glob.h>
 
 void print_tab(char **command,
-char const *prompt, int wrd_per_line, int biggest_wrd)
+char const *prompt, int wrd_per_line, int integ[2])
 {
     int count = 0;
+    int biggest_wrd = integ[0];
+    int size = integ[1];
 
     dprintf(1, "\n\r");
     for (int i = 0; command[i]; i++, count++) {
@@ -19,19 +21,22 @@ char const *prompt, int wrd_per_line, int biggest_wrd)
             my_putstr("\n\r");
             count = 0;
         }
-        dprintf(1, "%-*s\t", biggest_wrd, command[i]);
+        dprintf(1, "%-*s\t", biggest_wrd, command[i] + size);
     }
-    my_putstr("\n\r");
-    my_putstr(prompt);
-    dprintf(1, "\33[s\33[u");
+    dprintf(1, "\n\r%s\33[s\33[u", prompt);
 }
 
-void set_print_tab(char **command, input_t *input, char const *prompt)
+void set_print_tab(char **command, input_t *input, char const *prompt,
+char *buffer)
 {
     struct winsize w;
     int biggest_wrd = 0;
     int tmp;
+    int size;
 
+    for (size = strlen(buffer); buffer[size] != '/' && size > 0; size--);
+    if (size != 0 || buffer[0] == '/')
+        size++;
     ioctl(0, TIOCGWINSZ, &w);
     for (int i = 0; command[i]; i++) {
         tmp = strlen(command[i]);
@@ -39,7 +44,7 @@ void set_print_tab(char **command, input_t *input, char const *prompt)
             biggest_wrd = tmp;
     }
     tmp = w.ws_col / (biggest_wrd + 8 - biggest_wrd % 8);
-    print_tab(command, prompt, tmp, biggest_wrd);
+    print_tab(command, prompt, tmp, (int [2]){biggest_wrd, size});
     print_buffer(input, prompt);
 }
 

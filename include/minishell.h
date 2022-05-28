@@ -225,9 +225,10 @@ hist_t **history);
 int is_in_arr(char **arr, char *str);
 void clear_term(input_t *buf, struct winsize w, char const *prompt);
 void put_in_buffer(char c, input_t *buf, char const *prompt, hist_t **history);
-void print_tab(char **command, char const *prompt,
-int wrd_per_line, int biggest_wrd);
-void set_print_tab(char **command, input_t *input, char const *prompt);
+void set_print_tab(char **command, input_t *input, char const *prompt,
+char *buffer);
+void print_tab(char **command,
+char const *prompt, int wrd_per_line, int integ[2]);
 void up_arrow(input_t *input, hist_t **history);
 void down_arrow(input_t *input, hist_t **history);
 
