@@ -42,6 +42,7 @@ char **error_on_variable(char **str)
     str[i][j] != '$'; j++)
         write(2, &(str[i][j]), 1);
     write(2, ": Undefined variable.\n", 22);
+    set_last_exit(1);
     return (NULL);
 }
 

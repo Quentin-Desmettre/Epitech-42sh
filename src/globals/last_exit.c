@@ -5,6 +5,8 @@
 ** last_exit.c
 */
 
+#include "minishell.h"
+
 int last_exit(int new_status, int val)
 {
     static int last = 0;
@@ -16,7 +18,13 @@ int last_exit(int new_status, int val)
 
 void set_last_exit(int status)
 {
+    env_t *vars = global_env(NULL);
+    char *val = nbr_to_str(status);
+
     last_exit(1, status);
+    var_setter(&vars->vars,
+    var_index_of_key(vars->vars, "?"), (char *[]){"?", val, NULL});
+    free(val);
 }
 
 int get_last_exit(void)

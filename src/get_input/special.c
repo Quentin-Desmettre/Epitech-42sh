@@ -64,9 +64,9 @@ void special_char(input_t *input, char c, char const *prompt, hist_t **hist)
 
 char *special_input(input_t *input, char c, int *stop)
 {
+    tcsetattr(0, TCSANOW, original_termios(NULL));
     if (c == EOF) {
         stop ? (*stop) = 1 : 0;
-        tcsetattr(0, TCSANOW, original_termios(NULL));
         return input->buffer;
     }
     if (c == CTRL_C) {

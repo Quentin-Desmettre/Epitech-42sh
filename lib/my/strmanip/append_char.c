@@ -46,7 +46,8 @@ void append(char **str, char const *buf, int is_free)
 
 int char_is_alphanum(char const c)
 {
-    if (c < '0' || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || c > 'z')
+    if ((c < '0' || (c > '9' && c < 'A') ||
+    (c > 'Z' && c < 'a') || c > 'z') && c != '_')
         return 0;
     return 1;
 }
@@ -54,10 +55,10 @@ int char_is_alphanum(char const c)
 int str_is_alphanum(char const *str)
 {
     for (int i = 0; str[i]; i++)
-        if (str[i] < '0' ||
+        if ((str[i] < '0' ||
         (str[i] > '9' && str[i] < 'A') ||
         (str[i] > 'Z' && str[i] < 'a') ||
-        str[i] > 'z')
+        str[i] > 'z') && str[i] != '_')
             return 0;
     return 1;
 }

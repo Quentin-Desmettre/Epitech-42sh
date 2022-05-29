@@ -71,6 +71,7 @@ int main(int ac, char **av, char **env)
     set_history_path(env);
     vars = init_vars(env, &saved_term);
     global_env(vars);
+    set_last_exit(0);
     while (!stop) {
         set_reset_buffer(0);
         set_is_exit(0);

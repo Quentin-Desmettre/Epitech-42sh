@@ -15,7 +15,7 @@ void set_input(input_t *input)
         input->buf_size--;
     }
     input->key_pos = input->buf_size;
-    input->buff_limit = input->buf_size > 0 ? input->buf_size - 1 : BUFFER_SIZE;
+    input->buff_limit = input->buf_size > 1 ? input->buf_size - 1 : BUFFER_SIZE;
     input->down = 0;
     input->up = 0;
 }

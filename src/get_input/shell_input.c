@@ -49,8 +49,9 @@ void put_in_buffer(char c, input_t *buf, char const *prompt, hist_t **history)
             buf->buffer[i] = buf->buffer[i + 1];
     } else {
         if (buf->buf_size + 1 >= buf->buff_limit) {
-            buf->buffer = realloc(buf->buffer, buf->buff_limit * 2);
-            buf->buff_limit = buf->buff_limit * 2;
+            buf->buffer = realloc(buf->buffer,
+            buf->buff_limit * 2 + !buf->buff_limit);
+            buf->buff_limit = buf->buff_limit * 2 + !buf->buff_limit;
         }
         for (int i = buf->buf_size; i > buf->key_pos; i--)
             buf->buffer[i] = buf->buffer[i - 1];

@@ -74,6 +74,8 @@ void history_append(char *command, hist_t **history)
     if (fd == -1)
         return;
     dprint(fd, "%s\n", command);
+    var_setter(&global_env(NULL)->vars, var_index_of_key(global_env(NULL)
+    ->vars, "_"), (char *[]){"_", strdup(command), NULL});
     close(fd);
 }
 

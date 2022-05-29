@@ -22,7 +22,7 @@ static void get_variable(char **str, const char *source, int *len_var,
 int index_var)
 {
     for (int i = index_var; source[i]; i++, (*len_var)++)
-        if (!char_is_alphanum(source[i]))
+        if (!char_is_alphanum(source[i]) && source[i] != '?')
             break;
     (*str) = malloc(sizeof(char) * (*len_var + 1));
     for (int i = 0; i < (*len_var) && source[index_var + i]; i++)
