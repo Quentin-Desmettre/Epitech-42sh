@@ -44,8 +44,9 @@ int exec_builtin_sec(char **args, env_t *vars, int fds[2], int tmp[2])
 
 int exec_builtin_fd(char **args, command_t *cur, void *params[6], int is_pipe)
 {
-    void (*builtin[])(char **, char ***, int, int) = {&cd_pipe, &setenv_pipe,
-        &unsetenv_pipe, NULL, NULL, NULL, NULL, NULL, NULL, &echo_builtin
+    void (*builtin[])(char **, char ***, int, int) = {
+        &cd_pipe, &setenv_pipe, &unsetenv_pipe,
+        NULL, NULL, NULL, NULL, NULL, NULL, &echo_builtin
     };
     env_t *vars = global_env(NULL);
     int *fds = params[0];

@@ -42,8 +42,6 @@ void exec_file(char const *file, int is_rc)
 
 void exec_files(int nb, char **files)
 {
-    for (int i = 0; i < nb; i++) {
-        print("exec %s\n", files[i]);
+    for (int i = 0; i < nb; i++)
         exec_file(files[i], 0);
-    }
 }
