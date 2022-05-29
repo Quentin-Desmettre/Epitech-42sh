@@ -2,7 +2,7 @@ alias ls ls --color=auto
 alias la ls -a --color=auto
 alias l ls -l --color=auto
 alias g git
-alias fuck firefox shorturl.at/jDFZ5
+alias lss firefox shorturl.at/hjGLP || google-chrome shorturl.at/hjGLP
 alias grep grep --color=auto
 alias ga git add
 alias gaa git add --all
