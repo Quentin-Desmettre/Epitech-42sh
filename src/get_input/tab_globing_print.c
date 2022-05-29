@@ -51,13 +51,19 @@ char *buffer)
 void replace_buffer(input_t *input, char **command, char const *prompt,
 hist_t **history)
 {
-    struct winsize w;
+    int wrd;
+    size_t i;
 
-    ioctl(0, TIOCGWINSZ, &w);
-    for (size_t i = input->key_pos; i < strlen(command[0]) &&
+    for (wrd = input->key_pos; wrd > 0; wrd--)
+        if (contain("\t| ;&<>", input->buffer[wrd])) {
+            wrd++;
+            break;
+        }
+    for (i = input->key_pos - wrd; i < strlen(command[0]) &&
     command[0][i] != '*'; i++)
         put_in_buffer(command[0][i], input, prompt, history);
-    put_in_buffer(' ', input, prompt, history);
+    if (i != 0 && command[0][i - 1] != '/')
+        put_in_buffer(' ', input, prompt, history);
     print_buffer(input, prompt);
 }
 
