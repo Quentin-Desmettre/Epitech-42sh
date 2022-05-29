@@ -90,6 +90,3 @@ fclean:    clean
 	make -s -C lib/my fclean
 
 re:        fclean all
-
-copy_rc:
-	cp -f ./bonus/default.rc ~/.42shrc
