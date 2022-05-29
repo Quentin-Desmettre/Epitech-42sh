@@ -99,6 +99,6 @@ void new_parse_input(char *input, env_t *vars)
     } while (second_split != begin);
     if (is_exit()) {
         write(2, "exit\n", 5);
-        exit(0);
+        exit(get_exit_status());
     }
 }

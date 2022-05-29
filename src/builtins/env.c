@@ -42,18 +42,18 @@ int exec_builtin_sec(char **args, env_t *vars, int fds[2], int tmp[2])
     return 0;
 }
 
-int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
+int exec_builtin_fd(char **args, command_t *cur, void *params[6], int is_pipe)
 {
-    void (*builtin[])(char **, char ***, int, int) = {
-        &cd_pipe, &setenv_pipe, &unsetenv_pipe, NULL, NULL, NULL, NULL, NULL
-        , NULL, &echo_builtin
+    void (*builtin[])(char **, char ***, int, int) = {&cd_pipe, &setenv_pipe,
+        &unsetenv_pipe, NULL, NULL, NULL, NULL, NULL, NULL, &echo_builtin
     };
-    char *builtins[] = {
-        "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set",
-        "unset", "echo", "history", NULL
-    };
-    int index = index_str_in_array(builtins, args[0]);
+    env_t *vars = global_env(NULL);
+    int *fds = params[0];
+    int index = index_str_in_array((char **)builtins, args[0]);
 
+    if ((*(list_t **)(params[5]))->next == *(list_t **)(params[5]) &&
+    !HAS_REDIR_OUT(cur) && get_final_fd() >= 0)
+        fds[1] = get_final_fd();
     if (index < 3 || index == 9)
         builtin[index](args, &vars->env, fds[1], is_pipe);
     if (index == 3)

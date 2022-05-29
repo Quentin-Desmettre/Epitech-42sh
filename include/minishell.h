@@ -133,7 +133,7 @@ int print_flags(int *flags, char const *home, int len_home, int o_fd);
 char *get_current_dir(void);
 int get_cd_flags(char *str, int *flags);
 char *get_dir(char const *dir, char **env, char const *home);
-int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe);
+int exec_builtin_fd(char **args, command_t *cur, void *params[6], int is_pipe);
 int is_builtin(char const *word);
 void env_pipe(char **args, char ***e, int o_fd);
 void set_exit_status(int val);
@@ -282,5 +282,10 @@ void exec_file(char const *file, int is_rc);
 void exec_files(int nb, char **files);
 void start_parsing(char *input, env_t *vars);
 void history_builtin(char **args, hist_t **history, int o_fd, int is_pipe);
+
+__attribute__((unused)) static const char *builtins[] = {
+    "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set",
+    "unset", "echo", "history", NULL
+};
 
 #endif
