@@ -7,13 +7,17 @@
 
 #include <stdlib.h>
 #include "linked_list.h"
+#include <stdio.h>
 
 s_list_t **malloc_stack(void);
 void flush_garbage(void);
+int is_free_stdin(void);
 
 void my_exit(int code)
 {
     flush_garbage();
+    if (is_free_stdin())
+        fclose(stdin);
     exit(code);
 }
 

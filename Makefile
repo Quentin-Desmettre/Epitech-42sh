@@ -20,6 +20,7 @@ SRC = \
 	src/builtins/unset.c                               \
 	src/builtins/echo.c                                \
 	src/globals/last_exit.c                            \
+	src/globals/free_stdin.c                           \
 	src/globals/reset_buffer.c                         \
 	src/globals/std_in.c                               \
 	src/globals/is_exit.c                              \
@@ -57,6 +58,7 @@ SRC = \
 	src/parse_input/call_all_check.c				   \
 	src/parse_input/generate_command.c				   \
 	src/parse_input/globing.c						   \
+	src/exec_file.c
 
 OBJ = $(SRC:.c=.o)
 

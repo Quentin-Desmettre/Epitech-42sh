@@ -238,8 +238,9 @@ void down_arrow(input_t *input, hist_t **history);
 int search_pattern(char *pattern, char *str);
 void replace_all_variable(char **env, char **str, char spec);
 void find_all_back_slash(char **str);
-void replace_aliases_in_word_parse(char **word_parse, list_t *vars);
-
+void replace_aliases_in_word_parse(char ***word_parse, list_t *vars);
+void set_free_stdin(int new_val);
+int is_free_stdin(void);
 int check_redir_out(command_t *tmp, char **err_mess, char **words, int *i);
 int check_redir_in(command_t *tmp, char **err_mess, char **words, int *i);
 int check_pipe(command_t **tmp, char **all[2], int *i, list_t **commands);
@@ -277,5 +278,8 @@ char *get_oldwd(void);
 char **resolve_globbings(char **args, char **strings);
 char **resolve_unsetenv_globbings(char **args, char **env);
 char *replace_history(char *str, env_t *vars);
+void exec_file(char const *file, int is_rc);
+void exec_files(int nb, char **files);
+void start_parsing(char *input, env_t *vars);
 
 #endif

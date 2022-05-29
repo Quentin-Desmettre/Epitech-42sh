@@ -45,14 +45,10 @@ void set_value(char **args, replace_t *new)
     all[0] = '\0';
     for (int i = 2; i < size; i++) {
         all = realloc(all, strlen(args[i]) + strlen(all) + 2 + add);
-        if (i == 2 && size > 3)
-            strcat(all, "(");
         if (i != 2)
             strcat(all, " ");
         strcat(all, args[i]);
     }
-    if (size > 3)
-        strcat(all, ")");
     new->name = strdup(args[1]);
     new->value = all;
 }

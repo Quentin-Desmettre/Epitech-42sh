@@ -56,6 +56,7 @@ void free_vars(env_t *vars)
 env_t *init_vars(char **env, struct termios *saved_term)
 {
     env_t *vars = malloc(sizeof(env_t));
+    char *rc_path = str_concat(2, get_field(env, "HOME="), "/.42shrc");
 
     my_memset(vars, 0, sizeof(env_t));
     vars->env = init_env(env);
@@ -65,5 +66,8 @@ env_t *init_vars(char **env, struct termios *saved_term)
     open_stdin();
     tcgetattr(0, saved_term);
     original_termios(saved_term);
+    global_env(vars);
+    exec_file(rc_path, 1);
+    free(rc_path);
     return vars;
 }

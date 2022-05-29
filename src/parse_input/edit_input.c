@@ -55,7 +55,7 @@ char **split_words(char *input, env_t *vars)
     input = add_separator(str_separator, input);
     word_parse = str_to_word_array(input, " ");
     find_all_back_slash(word_parse);
-    replace_aliases_in_word_parse(word_parse, vars->aliases->commands);
+    replace_aliases_in_word_parse(&word_parse, vars->aliases->commands);
     replace_all_variable(vars->vars, word_parse, '\t');
     replace_all_variable(vars->env, word_parse, '=');
     for (int i = 0; word_parse[i]; i++)

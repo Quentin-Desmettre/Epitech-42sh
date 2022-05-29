@@ -7,18 +7,23 @@
 
 #include "minishell.h"
 
+int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
 void continue_input_tty(char **in)
 {
     char *tmp = NULL;
     char *input = *in;
 
-    while (input[strlen(input) - 1] == '\\') {
+    while (input[max(strlen(input), 0)] == '\\') {
         tmp = get_next_line(NULL);
         if (!tmp || !tmp[0]) {
             free(tmp);
             break;
         }
-        input[strlen(input) - 1] = 0;
+        input[max(strlen(input), 0)] = 0;
         append(&input, tmp, 1);
         free(tmp);
     }
@@ -66,12 +71,13 @@ int main(int ac, char **av, char **env)
     struct termios saved_term;
     env_t *vars;
 
-    if (ac != 1 || !env || !av)
+    if (!env || !av)
         return 84;
     set_history_path(env);
     vars = init_vars(env, &saved_term);
-    global_env(vars);
     set_last_exit(0);
+    if (ac > 1)
+        exit((exec_files(ac - 1, av + 1), 0));
     while (!stop) {
         set_reset_buffer(0);
         set_is_exit(0);
