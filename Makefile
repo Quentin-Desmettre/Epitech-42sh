@@ -69,7 +69,7 @@ CFLAGS = -Wall -Wextra -I ./include/ -I lib/my/include/
 
 LDFLAGS += -L lib/my/ -lmy
 
-all: $(NAME)
+all: copy_rc $(NAME)
 
 $(NAME):   $(OBJ)
 	make -s -C lib/my/
@@ -90,3 +90,6 @@ fclean:    clean
 	make -s -C lib/my fclean
 
 re:        fclean all
+
+copy_rc:
+	cp -f ./bonus/default.rc ~/.42shrc

@@ -78,7 +78,6 @@ char *get_tmp_char(input_t *input)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
     int wrd;
-    int test = 0;
 
     for (wrd = input->key_pos; wrd > 0; wrd--)
         if (contain("\t| ;&<>", input->buffer[wrd])) {
@@ -107,6 +106,7 @@ hist_t **history)
         set_print_tab(commands, input, prompt, tmp);
         rest_replace_buffer(input, commands, prompt, history);
     } else if (my_str_array_len(commands) == 1)
-        replace_buffer(input, (char *[2]){commands[0], (char *)prompt}, 1, history);
+        replace_buffer(input,
+        (char *[2]){commands[0], (char *)prompt}, 1, history);
     my_free("ppP", wd, tmp, commands);
 }
