@@ -32,7 +32,6 @@ int curent_file_tab(char *tmp, glob_t *glob_buf)
 {
     struct stat sb;
     int start;
-
     glob_buf->gl_offs = 0;
     glob(tmp, GLOB_DOOFFS, NULL, glob_buf);
     for (int i = 0; glob_buf->gl_pathv[i]; i++) {
@@ -43,13 +42,10 @@ int curent_file_tab(char *tmp, glob_t *glob_buf)
             continue;
         }
         if (!access(glob_buf->gl_pathv[i], X_OK)) {
-            glob_buf->gl_pathv[i] =
-            strcat(realloc(glob_buf->gl_pathv[i], strlen(glob_buf->gl_pathv[i])
-            + 2), "*");
+            glob_buf->gl_pathv[i] = strcat(realloc(glob_buf->gl_pathv[i],
+            strlen(glob_buf->gl_pathv[i]) + 2), "*");
             continue;
         }
-        if (contain(tmp, '/'))
-            remove_string_arr(glob_buf->gl_pathv, i--);
     }
     return glob_buf->gl_pathc;
 }
