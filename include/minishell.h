@@ -277,5 +277,6 @@ char *get_oldwd(void);
 char **resolve_globbings(char **args, char **strings);
 char **resolve_unsetenv_globbings(char **args, char **env);
 char *replace_history(char *str, env_t *vars);
+void history_builtin(char **args, hist_t **history, int o_fd, int is_pipe);
 
 #endif
