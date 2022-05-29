@@ -48,23 +48,43 @@ char *buffer)
     print_buffer(input, prompt);
 }
 
-void replace_buffer(input_t *input, char **command, char const *prompt,
+void replace_buffer(input_t *input, char *str[2], int space,
 hist_t **history)
 {
+    char *command = str[0];
+    char *prompt = str[1];
     int wrd;
-    size_t i;
+    int i;
 
     for (wrd = input->key_pos; wrd > 0; wrd--)
         if (contain("\t| ;&<>", input->buffer[wrd])) {
             wrd++;
             break;
         }
-    for (i = input->key_pos - wrd; i < strlen(command[0]) &&
-    command[0][i] != '*'; i++)
-        put_in_buffer(command[0][i], input, prompt, history);
-    if (i != 0 && command[0][i - 1] != '/')
+    for (i = input->key_pos; i > wrd; i--)
+        put_in_buffer(127, input, prompt, history);
+    for (i = 0; i < (int)strlen(command) && strcmp(command + i, "*"); i++)
+        put_in_buffer(command[i], input, prompt, history);
+    if (i != 0 && command[i - 1] != '/' && space == 1)
         put_in_buffer(' ', input, prompt, history);
     print_buffer(input, prompt);
+}
+
+void rest_replace_buffer(input_t *input, char **command, char const *prompt,
+hist_t **history)
+{
+    char *tmp = strdup(command[0]);
+
+    int boolean = 1;
+
+    for (int i = 0; boolean; i++) {
+        for (int j = 0; command[j] && boolean; j++) {
+            (tmp[i] == command[j][i]) ? (boolean = 1) : (boolean = 0,
+            tmp[i] = 0);
+        }
+    }
+    if (strlen(tmp) != 0)
+        replace_buffer(input, (char *[2]){tmp, (char *)prompt}, 0, history);
 }
 
 int is_in_arr(char **arr, char *str)

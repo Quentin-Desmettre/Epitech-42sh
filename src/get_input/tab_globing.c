@@ -28,14 +28,6 @@ char **one_word(char **first)
     return result++;
 }
 
-void remove_string_arr(char **arr, int nb)
-{
-    free(arr[nb]);
-    for (int i = nb; arr[i]; i++) {
-        arr[i] = arr[i + 1];
-    }
-}
-
 int curent_file_tab(char *tmp, glob_t *glob_buf)
 {
     struct stat sb;
@@ -86,13 +78,11 @@ char **do_glob(char *tmp)
     return commands;
 }
 
-void globing_all_file(input_t *input, char const *prompt,
-hist_t **history)
+char *get_tmp_char(input_t *input)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
-    char *wd = malloc(sizeof(char) * 4096);
-    char **commands;
     int wrd;
+
     for (wrd = input->key_pos; wrd > 0; wrd--)
         if (contain("\t| ;&<>", input->buffer[wrd])) {
             wrd++;
@@ -100,13 +90,26 @@ hist_t **history)
         }
     strncpy(tmp, input->buffer + wrd, input->buf_size - wrd);
     tmp[input->key_pos - wrd] = '\0';
+    return tmp;
+}
+
+void globing_all_file(input_t *input, char const *prompt,
+hist_t **history)
+{
+    char *tmp = get_tmp_char(input);
+    char *wd = malloc(sizeof(char) * 4096);
+    char **commands;
+
+    if (contain(tmp, '*'))
+        return my_free("pp", wd, tmp);
     strcat(tmp, "*");
     getcwd(wd, 4096);
     commands = do_glob(tmp);
     chdir(wd);
-    if (my_str_array_len(commands) > 1)
+    if (my_str_array_len(commands) > 1) {
         set_print_tab(commands, input, prompt, tmp);
-    else if (my_str_array_len(commands) == 1)
-        replace_buffer(input, commands, prompt, history);
-    my_free("pP", wd, commands);
+        rest_replace_buffer(input, commands, prompt, history);
+    } else if (my_str_array_len(commands) == 1)
+        replace_buffer(input, (char *[2]){commands[0], (char *)prompt}, 1, history);
+    my_free("ppP", wd, tmp, commands);
 }

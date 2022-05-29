@@ -32,6 +32,7 @@ SRC = \
 	src/get_input/termios.c                            \
 	src/get_input/tab_globing.c                        \
 	src/get_input/tab_globing_print.c                  \
+	src/get_input/remove_string_from_array.c           \
 	src/main.c                                         \
 	src/parse_input/heredoc.c                          \
 	src/parse_input/history_input.c                    \
