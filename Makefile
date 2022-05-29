@@ -69,9 +69,9 @@ CFLAGS = -Wall -Wextra -I ./include/ -I lib/my/include/
 
 LDFLAGS += -L lib/my/ -lmy
 
-all: copy_rc $(NAME)
+all: $(NAME)
 
-$(NAME):   $(OBJ)
+$(NAME): $(OBJ)
 	make -s -C lib/my/
 	gcc -o $(NAME) $(FLAGS) $(OBJ) $(LDFLAGS)
 
