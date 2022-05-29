@@ -74,7 +74,6 @@ void rest_replace_buffer(input_t *input, char **command, char const *prompt,
 hist_t **history)
 {
     char *tmp = strdup(command[0]);
-
     int boolean = 1;
 
     for (int i = 0; boolean; i++) {
