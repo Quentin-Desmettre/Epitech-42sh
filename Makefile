@@ -14,6 +14,7 @@ SRC = \
 	src/builtins/unsetenv.c                            \
 	src/builtins/alias.c                               \
 	src/builtins/unalias.c                             \
+	src/builtins/history.c                             \
 	src/builtins/set.c                            	   \
 	src/builtins/set2.c                            	   \
 	src/builtins/set3.c                            	   \

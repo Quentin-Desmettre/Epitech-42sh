@@ -37,6 +37,8 @@ int exec_builtin_sec(char **args, env_t *vars, int fds[2], int tmp[2])
         setvar_pipe(args, &vars->vars, fds[1], is_pipe);
     if (index == 8)
         unsetvar_pipe(args, &vars->vars, fds[1], is_pipe);
+    if (index == 10)
+        history_builtin(args, &vars->history, fds[1], is_pipe);
     return 0;
 }
 
@@ -48,7 +50,7 @@ int exec_builtin_fd(char **args, env_t *vars, int fds[2], int is_pipe)
     };
     char *builtins[] = {
         "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set",
-        "unset", "echo", NULL
+        "unset", "echo", "history", NULL
     };
     int index = index_str_in_array(builtins, args[0]);
 
@@ -67,10 +69,10 @@ int is_builtin(char const *word)
 {
     char *builtins[] = {
     "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set"
-    , "unset", "echo", NULL
+    , "unset", "echo", "history", NULL
     };
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 11; i++)
         if (my_strcmp(word, builtins[i]) == 0)
             return 1;
     return 0;
