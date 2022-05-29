@@ -78,6 +78,7 @@ char *get_tmp_char(input_t *input)
 {
     char *tmp = malloc(sizeof(char) * (input->buf_size + 2));
     int wrd;
+    int test = 0;
 
     for (wrd = input->key_pos; wrd > 0; wrd--)
         if (contain("\t| ;&<>", input->buffer[wrd])) {
