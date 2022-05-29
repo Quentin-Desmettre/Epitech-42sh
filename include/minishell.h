@@ -280,7 +280,7 @@ char **resolve_unsetenv_globbings(char **args, char **env);
 char *replace_history(char *str, env_t *vars);
 void exec_file(char const *file, int is_rc);
 void exec_files(int nb, char **files);
-void start_parsing(char *input, env_t *vars);
+void start_parsing(char *input, env_t *vars, int add_to_hist);
 void history_builtin(char **args, hist_t **history, int o_fd, int is_pipe);
 
 __attribute__((unused)) static const char *builtins[] = {

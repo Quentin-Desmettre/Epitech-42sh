@@ -19,7 +19,7 @@ static void exec_loop(int fd, env_t *vars, int stop, char *input)
         set_is_exit(0);
         if (!(input = get_shell_input(vars, &stop)))
             break;
-        start_parsing(input, vars);
+        start_parsing(input, vars, 0);
     }
     fclose(stdin);
     dup2(stdin_copy, 0);

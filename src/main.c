@@ -54,10 +54,11 @@ void continue_input(char **in, env_t *vars)
     *in = input;
 }
 
-void start_parsing(char *input, env_t *vars)
+void start_parsing(char *input, env_t *vars, int add_to_hist)
 {
     continue_input(&input, vars);
-    history_append(input, &vars->history);
+    if (add_to_hist)
+        history_append(input, &vars->history);
     if (input[0] && parse_for_backticks(&input, vars))
         new_parse_input(input, vars);
     else
@@ -83,7 +84,7 @@ int main(int ac, char **av, char **env)
         set_is_exit(0);
         if (!(input = get_shell_input(vars, &stop)))
             break;
-        start_parsing(input, vars);
+        start_parsing(input, vars, 1);
     }
     exit(0);
 }

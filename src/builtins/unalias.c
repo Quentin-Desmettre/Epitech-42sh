@@ -46,7 +46,7 @@ void one_unalias(list_t **c, char *av)
     } while (*c && (tmp != *c || is_head));
 }
 
-void unalias(char **args, env_t *e,  __attribute__((unused))int o_fd,
+void unalias(char **args, env_t *e, __attribute__((unused))int o_fd,
 int is_pipe)
 {
     int size = my_str_array_len(args);

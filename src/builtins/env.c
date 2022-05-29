@@ -69,8 +69,8 @@ int exec_builtin_fd(char **args, command_t *cur, void *params[6], int is_pipe)
 int is_builtin(char const *word)
 {
     char *builtins[] = {
-    "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set"
-    , "unset", "echo", "history", NULL
+        "cd", "setenv", "unsetenv", "env", "exit", "alias", "unalias", "set",
+        "unset", "echo", "history", NULL
     };
 
     for (int i = 0; i < 11; i++)
